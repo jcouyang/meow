@@ -1,26 +1,20 @@
-package meow
+package meow.functor
 
 import munit._
+import org.scalacheck.Prop._
 
-class KanExtensions extends FunSuite {
- 
-  test("phantom number at type level") {
-    enum Nat {
-      case Zero
-      case Succ[A]() extends Nat
+class KanExtensions extends ScalaCheckSuite {
+  given Functor[Option] {
+    def [A, B](r: Option[A]).map(f: A => B):Option[B] = r.map(f)
+  }
+
+  property("Right Kan") {
+    forAll { (input: Option[List[Int]]) =>
+      val nat: [A] => Option[List[A]] => Vector[A] = [A] => (a: Option[List[A]]) => a.map(_.toVector).getOrElse(Vector())
+      val toRan: [A] => Option[A] => Ran[List, Vector, A] = [A] => (a: Option[A]) => Ran.toRan[Option, List, Vector, A](nat)(a)
+      val fromRanToRan = Ran.fromRan[Option, List, Vector, Int](toRan) // since PolyFunction does not has compose function
+
+      fromRanToRan(input) == nat(input)
     }
-    import Nat._
-    type Nat2 = Succ[Succ[Zero.type]]
-    type Nat3 = Succ[Succ[Succ[Zero.type]]]
-
-    enum Vector[+N <: Nat, +A] {
-      case Cons(head: A, tail: Vector[N, A]) extends Vector[Succ[N], A]
-      case Nil extends Vector[Zero.type, Nothing]
-    }
-    import Vector._
-    val vector2: Vector[Nat2, Int] = Cons(1, Cons(2, Nil))
-    val vector3: Vector[Nat3, Int] = Cons(1, Cons(2, Cons(3, Nil)))
-
-    compileErrors("val vector2: Vector[Nat2, Int] = Cons(1, Cons(2, Cons(3, Nil)))")
   }
 }
