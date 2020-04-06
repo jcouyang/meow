@@ -10,7 +10,8 @@ lazy val root = project
     // libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit" % "0.7.1" % Test,
-      "org.scalameta" %% "munit-scalacheck" % "0.7.1" % Test
+      "org.scalameta" %% "munit-scalacheck" % "0.7.1" % Test,
+      "com.chuusai" % "shapeless_2.13" % "2.3.3" % Test,
     ),
     // To make the default compiler and REPL use Dotty
     scalaVersion := dottyVersion,

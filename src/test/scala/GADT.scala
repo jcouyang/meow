@@ -1,5 +1,4 @@
 package meow
-import arrow._
 
 import munit._
 import org.scalacheck.Prop._
