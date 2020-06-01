@@ -13,6 +13,10 @@ class DependentTypes extends munit.FunSuite {
     def apply[L <: HList](value: L) = (inst: Second[L]) ?=> inst(value)
   }
 
+  object EqSecond {
+    def apply[L <: HList](value: L)(using inst: Second[L])(find: inst.Out) = inst(value) == find
+  }
+
   test("dependent function") {
     given instanceSecond[A, B, C <: HList] as Second[A::B::C] {
       type Out = B
@@ -20,5 +24,8 @@ class DependentTypes extends munit.FunSuite {
     }
     assertEquals(Second(1::"2"::HNil), "2")
     assertEquals(Second("1"::2::HNil), 2)
+    assert(
+      EqSecond("1" :: "3" :: HNil)(3)
+    )
   }
 }
