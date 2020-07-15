@@ -24,8 +24,8 @@ class DependentTypes extends munit.FunSuite {
     }
     assertEquals(Second(1::"2"::HNil), "2")
     assertEquals(Second("1"::2::HNil), 2)
-    assert(
-      EqSecond("1" :: "3" :: HNil)(3)
+    compileErrors(
+      """EqSecond("1" :: "3" :: HNil)(3)"""
     )
   }
 }
