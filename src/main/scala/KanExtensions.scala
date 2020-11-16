@@ -16,8 +16,9 @@ object Ran {
 
 // Free Functor
 given [G[_],H[_]] as Functor[[A] =>> Ran[G, H, A]] {
-  def [A, B](r: Ran[G, H, A]).map(f: A => B):Ran[G,H,B] =
-    Ran([C] => (k:B=>G[C]) => r.run(k.compose(f)))
+  extension [A, B](r: Ran[G, H, A])
+    def map(f: A => B):Ran[G,H,B] =
+      Ran([C] => (k:B=>G[C]) => r.run(k.compose(f)))
 }
 
 //data Lan g h a where
