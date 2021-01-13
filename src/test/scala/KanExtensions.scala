@@ -4,9 +4,8 @@ import munit._
 import org.scalacheck.Prop._
 
 class KanExtensions extends FunSuite with ScalaCheckSuite {
-  given Functor[Option] {
-    def [A, B](r: Option[A]).map(f: A => B):Option[B] = r.map(f)
-  }
+  given Functor[Option] with
+    extension [A, B](r: Option[A]) def map(f: A => B):Option[B] = r.map(f)
 
   property("Right Kan: fromRan . toRan") {
     forAll { (input: Option[List[Int]]) =>
@@ -19,11 +18,13 @@ class KanExtensions extends FunSuite with ScalaCheckSuite {
   }
 
   property("Right Kan: toRan . fromRan") {
-    forAll { (input: Option[String]) =>
+    forAll { (input: Option[String], input2: List[String]) =>
       val nat: [A] => Option[List[A]] => Vector[A] = [A] => (a: Option[List[A]]) => a.toList.flatten.toVector
       val kran = [A] => (a: Option[A]) => Ran[List, Vector, A]([B] => (f:A => List[B])=> a.toList.flatMap(f).toVector)
       val fromRan: [A] => Option[List[A]] => Vector[A] = [A] => (a:Option[List[A]]) => Ran.fromRan[Option, List, Vector, A](kran)(a)
-      assertEquals(Ran.toRan[Option, List, Vector, String](fromRan)(input), kran(input))
+      val a = kran(input)
+      val b = Ran.toRan[Option, List, Vector, String](fromRan)(input)
+      a.run((s:String) => input2) == b.run((s: String) => input2)
     }
   }
 
@@ -32,7 +33,6 @@ class KanExtensions extends FunSuite with ScalaCheckSuite {
       val nat: [A] => Vector[A] => Option[List[A]] = [A] => (a: Vector[A]) => Some(a.toList)
       val toLan : [B] => Lan[List, Vector, B] => Option[B] =
         [B] => (a: Lan[List, Vector, B]) => Lan.toLan[Option, List, Vector, B](nat)(a)
-
       Lan.fromLan[Option, List, Vector, Int](toLan)(input) == nat(input)
     }
   }

@@ -19,3 +19,6 @@ project/plugins/project/
 # End of https://www.gitignore.io/api/sbt
 .dotty-ide-artifact
 .dotty-ide.json
+.bloop/
+.metals/
+project/metals.sbt

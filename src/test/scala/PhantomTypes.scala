@@ -13,7 +13,7 @@ class PhantomTypes extends FunSuite {
     type Nat2 = Succ[Succ[Zero.type]]
     type Nat3 = Succ[Succ[Succ[Zero.type]]]
 
-    enum Vector[+N <: Nat, +A] {
+    enum Vector[N <: Nat, +A] {
       case Cons(head: A, tail: Vector[N, A]) extends Vector[Succ[N], A]
       case Nil extends Vector[Zero.type, Nothing]
     }

@@ -1,31 +1,40 @@
 package meow
 
 import munit._
-import shapeless._
 
+// === start https://github.com/lampepfl/dotty/blob/master/tests/run/HLists.scala
+sealed trait HList
+case class HCons[+HD, +TL](hd: HD, tl: TL) extends HList
+case object HNil extends HList
+sealed trait Num
+case object Zero extends Num
+case class Succ[N <: Num](pred: N) extends Num
+type HNil = HNil.type
+type Zero = Zero.type
+trait At[Xs <: HList, N <: Num] {
+  type Out
+  def at(xs: Xs, n: N): Out
+}
+implicit def atZero[XZ, Xs <: HList]: At[HCons[XZ, Xs], Zero] { type Out = XZ } =
+  new At[HCons[XZ, Xs], Zero] {
+    type Out = XZ
+    def at(xs: HCons[XZ, Xs], n: Zero) = xs.hd
+  }
+implicit def atSucc[XX, Xs <: HList, N <: Num](
+  implicit ev: At[Xs, N]
+): At[HCons[XX, Xs], Succ[N]] { type Out = ev.Out } = new At[HCons[XX, Xs], Succ[N]] {
+  type Out = ev.Out
+  def at(xs: HCons[XX, Xs], n: Succ[N]): Out = ev.at(xs.tl, n.pred)
+}
+def at[Xs <: HList, N <: Num](xs: Xs, n: N)(
+  implicit ev: At[Xs, N]
+): ev.Out = ev.at(xs, n)
+
+// === end
 class DependentTypes extends munit.FunSuite {
-  trait Second[L <: HList] {
-    type Out
-    def apply(value: L): Out
-  }
-  
-  object Second {
-    def apply[L <: HList](value: L) = (inst: Second[L]) ?=> inst(value)
-  }
-
-  object EqSecond {
-    def apply[L <: HList](value: L)(using inst: Second[L])(find: inst.Out) = inst(value) == find
-  }
 
   test("dependent function") {
-    given instanceSecond[A, B, C <: HList] as Second[A::B::C] {
-      type Out = B
-      def apply(value: A::B::C):Out = value.at(Nat._1)
-    }
-    assertEquals(Second(1::"2"::HNil), "2")
-    assertEquals(Second("1"::2::HNil), 2)
-    compileErrors(
-      """EqSecond("1" :: "3" :: HNil)(3)"""
-    )
+    assertEquals(at(HCons(1, HCons("2", HNil)), Succ(Zero)), "2")
+    assertEquals(at(HCons("1", HCons(2, HNil)), Succ(Zero)), 2)
   }
 }
