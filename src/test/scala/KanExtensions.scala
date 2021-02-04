@@ -6,7 +6,7 @@ import org.scalacheck.Prop._
 
 class KanExtensions extends FunSuite with ScalaCheckSuite {
   given Functor[Option] with
-    extension [A, B](r: Option[A]) def fmap(f: A => B):Option[B] = r.map(f)
+    def fmap[A, B](f: A => B) = (r: Option[A]) => r.map(f)
 
   property("Right Kan: fromRan . toRan") {
     forAll { (input: Option[List[Int]]) =>

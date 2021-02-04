@@ -1,6 +1,7 @@
-package meow.control
+package meow
+package control
 
-import meow.data._
+import data.Functor
 // http://hackage.haskell.org/package/kan-extensions-5.2
 // Right Kan
 case class Ran[G[_], H[_], A](run: [B] => (A => G[B]) => H[B])
@@ -25,8 +26,8 @@ given [G[_]](using Functor[Ran[G, G, *]]): Monad[Ran[G, G, *]] with
   def pure[A](a: A): Ran[G, G, A] = Ran([C]=>(k:A=>G[C]) => k(a))
   def fmap[A, B](f: A => B) = (r: Ran[G, G, A]) => r.map(f)
   def liftA2[A, B, C](f: A => B => C): Ran[G,G,A] => Ran[G,G,B] => Ran[G,G, C] = (ra: Ran[G,G,A]) => (rb: Ran[G, G, B]) =>
-    ???
-  def flatMap[A, B](f: A => Ran[G,G,B]): Ran[G,G,A]=>Ran[G,G,B] = (fa: Ran[G, G, A]) =>
+    bind((fab: B => C) => rb.map(fab))(ra.map(f))
+  def bind[A, B](f: A => Ran[G,G,B]): Ran[G,G,A]=>Ran[G,G,B] = (fa: Ran[G, G, A]) =>
       Ran([C] => (k: B => G[C]) => fa.run((a)=> f(a).run(k)))
 //data Lan g h a where
 //  Lan :: (g b -> a) -> h b -> Lan g h a

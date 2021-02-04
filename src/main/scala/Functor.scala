@@ -1,5 +1,5 @@
 package meow
-package control
+package data
 
 import scala.annotation.targetName
 import Function._

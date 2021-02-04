@@ -1,10 +1,12 @@
 package meow
 package control
 
+import data.Functor
 import control._
 
 import scala.annotation.targetName
 import Function._
+
 
 trait Applicative[F[_]] extends Functor[F]:
   def pure[A](a: A): F[A]
@@ -13,7 +15,7 @@ trait Applicative[F[_]] extends Functor[F]:
   extension [A, B](fab: F[A => B])
     @targetName("sequential application")
     infix def <*>(fa: F[A]): F[B] = liftA2(identity[A => B])(fab)(fa)
-  
+
   extension [A, B](fa: F[A])
     @targetName("product right")
     infix def *>(fb: F[B]): F[B] =  fa.as(identity[B]) <*> fb
