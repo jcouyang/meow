@@ -1,5 +1,6 @@
 package meow.functor
 
+import meow.monad.Monad
 // http://hackage.haskell.org/package/kan-extensions-5.2
 // Right Kan
 case class Ran[G[_], H[_], A](run: [B] => (A => G[B]) => H[B])
@@ -20,6 +21,13 @@ given [G[_],H[_]]: Functor[[A] =>> Ran[G, H, A]] with
     def map(f: A => B):Ran[G,H,B] =
       Ran([C] => (k:B=>G[C]) => r.run(k.compose(f)))
 
+// Free Monad
+given [G[_]](using Functor[Ran[G, G, *]]): Monad[Ran[G, G, *]] with
+  def pure[A](a: A): Ran[G, G, A] = Ran([C]=>(k:A=>G[C]) => k(a))
+  extension [A, B](fa: Ran[G, G, A])
+    def map(f: A => B):Ran[G,G,B] = fa.map(f)
+    def >>= (f: A => Ran[G,G,B]):Ran[G,G,B] =
+      Ran([C] => (k: B => G[C]) => fa.run((a)=> f(a).run(k)))
 //data Lan g h a where
 //  Lan :: (g b -> a) -> h b -> Lan g h a
 enum Lan[G[_], H[_], A] {
@@ -37,3 +45,4 @@ object Lan {
   // glan :: h a -> Lan g h (g a)
   def glan[G[_], H[_]]: [A] => H[A] => Lan[G, H, G[A]] = [A] => (ha: H[A]) => Lan.LeftKan[G, H, G[A], A](identity, ha)
 }
+
