@@ -1,11 +1,12 @@
-package meow.functor
+package meow.control
 
+import meow.data._
 import munit._
 import org.scalacheck.Prop._
 
 class KanExtensions extends FunSuite with ScalaCheckSuite {
   given Functor[Option] with
-    extension [A, B](r: Option[A]) def map(f: A => B):Option[B] = r.map(f)
+    extension [A, B](r: Option[A]) def fmap(f: A => B):Option[B] = r.map(f)
 
   property("Right Kan: fromRan . toRan") {
     forAll { (input: Option[List[Int]]) =>
