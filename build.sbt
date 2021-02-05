@@ -13,6 +13,10 @@ lazy val root = project
     ),
     // To make the default compiler and REPL use Dotty
     scalaVersion := dottyVersion,
-    scalacOptions ++= Seq("-Ykind-projector", "-language:implicitConversions"),
+    scalacOptions ++= Seq(
+      "-Ykind-projector",
+      "-rewrite",
+      "-indent",
+      "-language:implicitConversions"),
     testFrameworks += new TestFramework("munit.Framework"),
   )

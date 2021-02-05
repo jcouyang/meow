@@ -4,7 +4,7 @@ import meow.data._
 import munit._
 import org.scalacheck.Prop._
 
-class KanExtensions extends FunSuite with ScalaCheckSuite {
+class KanExtensions extends FunSuite with ScalaCheckSuite:
   given Functor[Option] with
     def fmap[A, B](f: A => B) = (r: Option[A]) => r.map(f)
 
@@ -49,4 +49,3 @@ class KanExtensions extends FunSuite with ScalaCheckSuite {
       Lan.toLan[Option, List, Vector, Int](fromLan)(lan) == Option(input.size)
     }
   }
-}

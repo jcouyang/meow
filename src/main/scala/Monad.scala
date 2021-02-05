@@ -4,7 +4,7 @@ package control
 import data._
 import scala.annotation.targetName
 
-trait Monad[F[_]] extends Applicative[F]{
+trait Monad[F[_]] extends Applicative[F]:
   def bind[A, B](f: A => F[B]): F[A] => F[B]
   
   extension [A, B](fa: F[A])
@@ -15,4 +15,3 @@ trait Monad[F[_]] extends Applicative[F]{
     
     @targetName("sequential compose")
     infix def >>(fb: F[B]): F[B] = fa >>= {(_: A) => fb}
-}

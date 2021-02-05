@@ -2,17 +2,16 @@ package meow
 
 import munit._
 
-class DependentTypes2 extends munit.FunSuite {
+class DependentTypes2 extends munit.FunSuite:
 
   /** idris
   isSingleton : Bool -> Type
   isSingleton True = Nat
   isSingleton False = List Nat
   */
-  type IsSingleton[X <: Boolean] = X match {
+  type IsSingleton[X <: Boolean] = X match
     case true => Int
     case false => Option[Int]
-  }
 
   /**
     sum : (single : Bool) -> isSingleton single -> Nat
@@ -40,10 +39,9 @@ class DependentTypes2 extends munit.FunSuite {
   import scala.compiletime.ops.int
   import scala.compiletime.{S}
 
-  enum Vector[Nat, +A] {
+  enum Vector[Nat, +A]:
     case Cons[N <: Int, AA](head: AA, tail: Vector[N, AA]) extends Vector[S[N], AA]
     case Nil extends Vector[0, Nothing]
-  }
   import Vector._
 
   import int._
@@ -61,4 +59,3 @@ class DependentTypes2 extends munit.FunSuite {
   //   val v2 = Cons(3, Cons(4, Cons(5,Nil)))
   //   assertEquals(combine(v1, v2), Cons(1,Cons(2, Cons(3, Cons(4, Cons(5,Nil))))))
   // }
-}

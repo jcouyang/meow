@@ -11,10 +11,9 @@ case object Zero extends Num
 case class Succ[N <: Num](pred: N) extends Num
 type HNil = HNil.type
 type Zero = Zero.type
-trait At[Xs <: HList, N <: Num] {
+trait At[Xs <: HList, N <: Num]:
   type Out
   def at(xs: Xs, n: N): Out
-}
 implicit def atZero[XZ, Xs <: HList]: At[HCons[XZ, Xs], Zero] { type Out = XZ } =
   new At[HCons[XZ, Xs], Zero] {
     type Out = XZ
@@ -31,10 +30,9 @@ def at[Xs <: HList, N <: Num](xs: Xs, n: N)(
 ): ev.Out = ev.at(xs, n)
 
 // === end
-class DependentTypes extends munit.FunSuite {
+class DependentTypes extends munit.FunSuite:
 
   test("dependent function") {
     assertEquals(at(HCons(1, HCons("2", HNil)), Succ(Zero)), "2")
     assertEquals(at(HCons("1", HCons(2, HNil)), Succ(Zero)), 2)
   }
-}
