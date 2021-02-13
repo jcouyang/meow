@@ -17,16 +17,17 @@ object Ran:
 end Ran
 
 // Free Functor
-given [G[_],H[_]]: Functor[[A] =>> Ran[G, H, A]] with
+given [G[_],H[_]]: Functor[Ran[G, H, *]] with
   def fmap[A, B](f: A => B) = (r: Ran[G, H, A]) =>
       Ran([C] => (k:B=>G[C]) => r.run(k.compose(f)))
 
-// Free Monad
-given [G[_]](using Functor[Ran[G, G, *]]): Monad[Ran[G, G, *]] with
+given apRan[G[_]]: Applicative[Ran[G, G, *]] with
   def pure[A](a: A): Ran[G, G, A] = Ran([C]=>(k:A=>G[C]) => k(a))
-  def fmap[A, B](f: A => B) = (r: Ran[G, G, A]) => r.map(f)
   def liftA2[A, B, C](f: A => B => C): Ran[G,G,A] => Ran[G,G,B] => Ran[G,G, C] = (ra: Ran[G,G,A]) => (rb: Ran[G, G, B]) =>
-    bind((fab: B => C) => rb.map(fab))(ra.map(f))
+    ??? //bind((fab: B => C) => rb.map(fab))(ra.map(f))
+
+// Free Monad
+given monadRan[G[_]]: Monad[Ran[G, G, *]] = new Monad[Ran[G, G, *]] with Applicative[Ran[G,G,*]]:
   def bind[A, B](f: A => Ran[G,G,B]): Ran[G,G,A]=>Ran[G,G,B] = (fa: Ran[G, G, A]) =>
       Ran([C] => (k: B => G[C]) => fa.run((a)=> f(a).run(k)))
 //data Lan g h a where

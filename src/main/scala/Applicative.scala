@@ -8,22 +8,23 @@ import scala.annotation.targetName
 import Function._
 
 
-trait Applicative[F[_]] extends Functor[F]:
+trait Applicative[F[_]](using functorInstance: Functor[F]) extends Functor[F]:
   def pure[A](a: A): F[A]
   def liftA2[A, B, C](f: A => B => C): F[A] => F[B] => F[C]
-  
+
+  def fmap[A, B](f: A => B): F[A] => F[B] = Functor.map(f)
   extension [A, B](fab: F[A => B])
-    @targetName("sequential application")
+    @targetName("ap")
     infix def <*>(fa: F[A]): F[B] = liftA2(identity[A => B])(fab)(fa)
 
   extension [A, B](fa: F[A])
-    @targetName("product right")
-    infix def *>(fb: F[B]): F[B] =  fa.as(identity[B]) <*> fb
+    @targetName("productRight")
+    infix def *>(fb: F[B]): F[B] =  fa.voidLeft(identity[B]) <*> fb
 
-    @targetName("product left")
+    @targetName("productLeft")
     infix def <*(fb: F[B]): F[A] = liftA2(const[A, B])(fa)(fb)
 
-    @targetName("reverse application")
+    @targetName("flippedAp")
     infix def <**>(fab: F[A => B]): F[B] = liftA2((a: A) => (f: A => B) => f(a))(fa)(fab)
     
 end Applicative
