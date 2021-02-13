@@ -1,27 +1,14 @@
 package meow
 
-import data.Functor
-import control._
-import Applicative._
+import prelude.{given, _}
+
 import munit._
 import org.scalacheck.Prop._
-import Applicative._
-import data.Functor._
+
 
 class ApplicativeSpec extends munit.ScalaCheckSuite:
-  given Functor[Option] with
-      def fmap[A, B](f: A => B): Option[A] => Option[B] = (oa: Option[A]) => oa.map(f)
-
-  given Applicative[Option] with
-    def pure[A](a: A): Option[A] = Option(a)
-    def liftA2[A, B, C](f: A => B => C) = (oa: Option[A]) => (ob: Option[B]) =>
-      oa match {
-        case Some(a) => ob match {
-          case Some(b) => Option(f(a)(b))
-          case None => None
-        }
-        case None => None
-      }
+  
+  def compose[A] = (f: A => A) => (g: A => A) => (c: A) => f(g(c))
 
   property("Identity") {
     forAll { (fa: Option[Int]) =>
@@ -31,7 +18,7 @@ class ApplicativeSpec extends munit.ScalaCheckSuite:
 
   property("Composition") {
     forAll { (fa: Option[Int => Int], fb: Option[Int=>Int], fc: Option[Int]) =>
-      pure((f: Int => Int) => (g: Int => Int) => (c: Int) => f(g(c)) ) <*> fa <*> fb <*> fc == fa <*> (fb <*> fc)
+      pure(compose) <*> fa <*> fb <*> fc == fa <*> (fb <*> fc)
     }
   }
 

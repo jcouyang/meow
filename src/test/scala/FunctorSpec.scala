@@ -1,14 +1,12 @@
 package meow
 
-import data.Functor
-import Functor._
+import prelude.{given, _}
+
 import munit._
 import org.scalacheck.Prop._
 import Function._
 
 class FunctorSpec extends munit.ScalaCheckSuite:
-  given Functor[Option] with
-      def fmap[A, B](f: A => B): Option[A] => Option[B] = (oa: Option[A]) => oa.map(f)
   
   property("Identity") {
     forAll { (fa: Option[Int]) =>
@@ -17,17 +15,15 @@ class FunctorSpec extends munit.ScalaCheckSuite:
   }
 
   property("Composition") {
-    forAll { (fa: Option[Int], rnd1: Int, rnd2: Int) =>
-      val f = (a: Int) => a + rnd1/2
-      val g = (a: Int) => a + rnd2/2
+    forAll { (fa: Option[Int], f: Int => Int, g: Int => Int) =>
       map(f compose g)(fa) == (map(f) compose map(g))(fa)
     }
   }
 
   test("voidLeft and voidRight") {
     assertEquals(
-      3 voidRight map((x: Int) => x + 1)(Option(1)),
-      map((x: Int) => x + 1)(Option(1)) voidLeft 3)
+      3 `<$` map((x: Int) => x + 1)(Option(1)),
+      map((x: Int) => x + 1)(Option(1)) `$>` 3)
   }
 
   test("void") {
