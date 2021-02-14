@@ -10,7 +10,7 @@ trait Functor[F[_]]:
     infix def map(f: A => B): F[B] = fmap(f)(fa)
 
     @targetName("mapFlipped")
-    def <#>(f: A => B): F[B] = fa map f
+    def <#>(f: A => B): F[B] = fmap(f)(fa)
 
     @targetName("voidLeft")
     infix def `$>`(a: B): F[B] = fmap(const[B, A](a))(fa)
@@ -19,14 +19,11 @@ trait Functor[F[_]]:
 end Functor
 
 object Functor:
-  inline def map[F[_]] = (F: Functor[F]) ?=> [A, B] => (f: A => B) => (fa: F[A]) => F.fmap(f)(fa)
+  def map[F[_]](using Functor[F]) = [A, B] => (f: A => B) => (fa: F[A]) => fa.map(f)
 
   extension [F[_], A, B](a: A)
     @targetName("voidRight")
-    inline def `<$`(fb: F[B])(using Functor[F]): F[A] = fb.map(const(a))
-
-  extension [F[_], A, B](f: A => B)
-    def `<$>`(fa: F[A])(using Functor[F]): F[B] = fa map f
+    def `<$`(fb: F[B])(using Functor[F]): F[A] = fb.map(const(a))
 
   given Functor[Option] with
     def fmap[A, B](f: A => B): Option[A] => Option[B] = (oa: Option[A]) => oa.map(f)

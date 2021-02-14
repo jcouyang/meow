@@ -8,11 +8,11 @@ import scala.annotation.targetName
 import Function._
 
 
-trait Applicative[F[_]](using functor: Functor[F]) extends Functor[F]:
+trait Applicative[F[_]](using functor: Functor[F]):
   def pure[A](a: A): F[A]
   def liftA2[A, B, C](f: A => B => C): F[A] => F[B] => F[C]
 
-  def fmap[A, B](f: A => B): F[A] => F[B] = functor.fmap(f)
+  export functor.fmap
   extension [A, B](fab: F[A => B])
     @targetName("ap")
     infix def <*>(fa: F[A]): F[B] = liftA2(identity[A => B])(fab)(fa)

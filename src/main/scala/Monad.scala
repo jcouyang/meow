@@ -5,11 +5,10 @@ import data._
 import scala.annotation.targetName
 import Functor._
 
-trait Monad[F[_]](using Applicative[F]) extends Applicative[F]:
+trait Monad[F[_]](using applicative: Applicative[F]):
   def bind[A, B](f: A => F[B]): F[A] => F[B]
 
-  def pure[A](a: A): F[A] = Applicative.pure(a)
-  def liftA2[A, B, C](f: A => B => C): F[A] => F[B] => F[C] = Applicative.liftA2(f)
+  export applicative.{pure, liftA2}
 
   extension [A, B](fa: F[A])
     def flatMap(f: A => F[B]): F[B] = bind(f)(fa)
@@ -40,5 +39,5 @@ object Monad:
   def flatMap[M[_], A, B] = (M: Monad[M]) ?=> (ma: M[A]) => (f: A => M[B]) => ma >>= f
   def flatten[M[_], A] = (M: Monad[M]) ?=> (mma: M[M[A]]) => mma.flatten
 
-  given Monad[Option] with Applicative[Option] with
+  given Monad[Option] with
     def bind[A, B](f: A => Option[B]): Option[A] => Option[B] = (oa: Option[A]) => oa.flatMap(f)
