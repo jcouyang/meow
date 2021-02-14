@@ -15,16 +15,27 @@ trait Functor[F[_]]:
     @targetName("voidLeft")
     infix def `$>`(a: B): F[B] = fmap(const[B, A](a))(fa)
     def void: F[Unit] = fmap(const[Unit, A](()))(fa)
-  extension [A, B](a: A)
-    @targetName("voidRight")
-    infix def `<$`(fb: F[B]): F[A] = fmap(const[A, B](a))(fb)
 
-  extension [A, B](f: A => B)
-    def `<$>`(fa: F[A]): F[B] = fa map f
 end Functor
 
 object Functor:
-  def map[F[_], A, B] = (F: Functor[F]) ?=> (f: A => B) => (fa: F[A]) => F.fmap(f)(fa)
+  inline def map[F[_]] = (F: Functor[F]) ?=> [A, B] => (f: A => B) => (fa: F[A]) => F.fmap(f)(fa)
+
+  extension [F[_], A, B](a: A)
+    @targetName("voidRight")
+    inline def `<$`(fb: F[B])(using Functor[F]): F[A] = fb.map(const(a))
+
+  extension [F[_], A, B](f: A => B)
+    def `<$>`(fa: F[A])(using Functor[F]): F[B] = fa map f
 
   given Functor[Option] with
-      def fmap[A, B](f: A => B): Option[A] => Option[B] = (oa: Option[A]) => oa.map(f)
+    def fmap[A, B](f: A => B): Option[A] => Option[B] = (oa: Option[A]) => oa.map(f)
+
+  given [R]: Functor[R => *] with
+    def fmap[A, B](f: A => B): (R => A) => (R => B) = (fa: R => A) => f.compose(fa)
+
+  given Functor[List] with
+    def fmap[A, B](f: A => B): List[A] => List[B] = (la: List[A]) => la.map(f)
+
+  given [R]: Functor[(R, *)] with
+    def fmap[A, B](f: A => B): Tuple2[R, A] => (R, B) = (ta: (R, A)) => (ta._1, f(ta._2))

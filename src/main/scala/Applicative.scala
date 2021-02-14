@@ -8,11 +8,11 @@ import scala.annotation.targetName
 import Function._
 
 
-trait Applicative[F[_]](using Functor[F]) extends Functor[F]:
+trait Applicative[F[_]](using functor: Functor[F]) extends Functor[F]:
   def pure[A](a: A): F[A]
   def liftA2[A, B, C](f: A => B => C): F[A] => F[B] => F[C]
 
-  def fmap[A, B](f: A => B): F[A] => F[B] = Functor.map(f)
+  def fmap[A, B](f: A => B): F[A] => F[B] = functor.fmap(f)
   extension [A, B](fab: F[A => B])
     @targetName("ap")
     infix def <*>(fa: F[A]): F[B] = liftA2(identity[A => B])(fab)(fa)
@@ -41,12 +41,10 @@ object Applicative:
   def liftA3[F[_], A, B, C, D](f: A => B => C => D)(using A: Applicative[F]): F[A] => F[B] => F[C] => F[D] =
     (fa: F[A]) => (fb: F[B]) => (fc: F[C]) => A.liftA2(f)(fa)(fb) <*> fc
 
-  def when[F[_]] = (A: Applicative[F]) ?=> (cond: Boolean) => (doThing: F[Unit]) =>
-    if cond then
-      doThing
-    else pure(())
+  inline def when[F[_]] = (A: Applicative[F]) ?=> (cond: Boolean) => (doThing: F[Unit]) =>
+    inline if cond then doThing else pure(())
 
-  def unless[F[_]] = (A: Applicative[F]) ?=> (cond: Boolean) => (doThing: F[Unit]) =>
+  inline def unless[F[_]] = (A: Applicative[F]) ?=> (cond: Boolean) => (doThing: F[Unit]) =>
     when(!cond)(doThing)
 
   given Applicative[Option] with

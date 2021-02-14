@@ -10,20 +10,28 @@ class FunctorSpec extends munit.ScalaCheckSuite:
   
   property("Identity") {
     forAll { (fa: Option[Int]) =>
-      map(identity)(fa) == identity(fa)
+      identity `<$>` fa == identity(fa)
     }
   }
 
   property("Composition") {
     forAll { (fa: Option[Int], f: Int => Int, g: Int => Int) =>
-      map(f compose g)(fa) == (map(f) compose map(g))(fa)
+      (f compose g) `<$>` fa == (map[Option](f) compose map[Option](g))(fa)
     }
   }
 
   test("voidLeft and voidRight") {
     assertEquals(
-      3 `<$` map((x: Int) => x + 1)(Option(1)),
-      map((x: Int) => x + 1)(Option(1)) `$>` 3)
+      Option(1) `$>` 3,
+      3 `<$` Option(1)
+    )
+  }
+
+  test("<$>") {
+    assertEquals(
+      Option(1) `$>` 3,
+      3 `<$` Option(1)
+    )
   }
 
   test("void") {
