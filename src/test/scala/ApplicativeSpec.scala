@@ -12,25 +12,39 @@ class ApplicativeSpec extends munit.ScalaCheckSuite:
 
   property("Identity") {
     forAll { (fa: Option[Int]) =>
-      pure(identity) <*> fa == fa
+      pure[Option](identity) <*> fa == fa
     }
   }
 
   property("Composition") {
     forAll { (fa: Option[Int => Int], fb: Option[Int=>Int], fc: Option[Int]) =>
-      pure(compose) <*> fa <*> fb <*> fc == fa <*> (fb <*> fc)
+      pure[Option](compose) <*> fa <*> fb <*> fc == fa <*> (fb <*> fc)
     }
   }
 
   property("Homomorphism") {
     forAll {(f: String => String, x: String) =>
-      pure(f) <*> pure(x) == pure(f(x))
+      pure[Option](f) <*> pure(x) == (pure[Option](f(x)))
     }
   }
 
   property("Interchange") {
     forAll {(u: Option[String => String], y: String) =>
-      u <*> pure(y) == pure((f: String => String) => f(y)) <*> u
+      u <*> pure(y) == pure[Option]((f: String => String) => f(y)) <*> u
     }
+  }
+
+  test("syntax") {
+    val fa = pure[Option](1)
+    val fb: Option[Int] = pure(2)
+    val fc: Option[Int] = pure(3)
+    val ff = liftA[Option]((x:Int) => x +1)
+    val ff2 = liftA2[Option]((x: Int) => (y: Int) => x + y)
+    val ff3 = liftA3[Option]((x: Int) => (y: Int) => (z: Int) => x + y + z)
+
+    assertEquals(ff(fa), Option(2))
+    assertEquals(ff2(fa)(fb), Option(3))
+    assertEquals(ff3(fa)(fb)(fc), Option(6))
+
   }
 end ApplicativeSpec

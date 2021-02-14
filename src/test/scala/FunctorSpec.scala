@@ -16,7 +16,7 @@ class FunctorSpec extends munit.ScalaCheckSuite:
 
   property("Composition") {
     forAll { (fa: Option[Int], f: Int => Int, g: Int => Int) =>
-      fa <#> (f compose g) == (map[Option](f) compose map[Option](g))(fa)
+      (f compose g) `<$>` fa  == (map[Option](f) compose map[Option](g))(fa)
     }
   }
 

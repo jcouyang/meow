@@ -27,7 +27,7 @@ given apRan[G[_]]: Applicative[Ran[G, G, *]] with
     ??? //bind((fab: B => C) => rb.map(fab))(ra.map(f))
 
 // Free Monad
-given monadRan[G[_]]: Monad[Ran[G, G, *]] = new Monad[Ran[G, G, *]] with Applicative[Ran[G,G,*]]:
+given [G[_]]: Monad[Ran[G, G, *]] with
   def bind[A, B](f: A => Ran[G,G,B]): Ran[G,G,A]=>Ran[G,G,B] = (fa: Ran[G, G, A]) =>
       Ran([C] => (k: B => G[C]) => fa.run((a)=> f(a).run(k)))
 //data Lan g h a where

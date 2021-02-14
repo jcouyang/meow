@@ -24,28 +24,39 @@ trait Applicative[F[_]](using functor: Functor[F]):
     @targetName("productLeft")
     infix def <*(fb: F[B]): F[A] = liftA2(const[A, B])(fa)(fb)
 
-    @targetName("flippedAp")
+    @targetName("apFlipped")
     infix def <**>(fab: F[A => B]): F[B] = liftA2((a: A) => (f: A => B) => f(a))(fa)(fab)
-    
+
+    inline def when(cond: Boolean): F[Unit] = inline if cond then fa.void else pure(())
+    inline def unless(cond: Boolean): F[Unit] = fa.when(!cond)
+
 end Applicative
 
 object Applicative:
-  def pure[F[_], A] = (A: Applicative[F]) ?=>
-    (a: A) => A.pure(a)
+  def pure[F[_]] =
+    [A] => (a: A) => (A: Applicative[F]) ?=> A.pure(a)
+
+  def liftA2[F[_]] = [A, B, C] => (f: A => B => C) => (A: Applicative[F]) ?=> A.liftA2(f)
   
-  def liftA2[F[_], A, B, C] = (A: Applicative[F]) ?=> (f: A => B => C) => A.liftA2(f)
-  
-  def liftA[F[_], A, B] = (A: Applicative[F]) ?=> 
-    (f: A => B) => (fa: F[A]) => A.pure[A => B](f) <*> fa
+  def liftA[F[_]] =
+    [A, B] => (f: A => B) => (fa: F[A]) => (A: Applicative[F]) ?=> A.pure[A => B](f) <*> fa
     
-  def liftA3[F[_], A, B, C, D](f: A => B => C => D)(using A: Applicative[F]): F[A] => F[B] => F[C] => F[D] =
-    (fa: F[A]) => (fb: F[B]) => (fc: F[C]) => A.liftA2(f)(fa)(fb) <*> fc
+  def liftA3[F[_]] = [A, B, C, D] => (f: A => B => C => D) =>
+    (fa: F[A]) => (fb: F[B]) => (fc: F[C]) => (A: Applicative[F]) ?=> A.liftA2(f)(fa)(fb) <*> fc
 
-  inline def when[F[_]] = (A: Applicative[F]) ?=> (cond: Boolean) => (doThing: F[Unit]) =>
-    inline if cond then doThing else pure(())
+  inline def when[F[_]] = (cond: Boolean) => [A] => (doThing: F[A]) =>
+    (A: Applicative[F]) ?=> doThing.when(cond)
 
-  inline def unless[F[_]] = (A: Applicative[F]) ?=> (cond: Boolean) => (doThing: F[Unit]) =>
-    when(!cond)(doThing)
+  inline def unless[F[_]] = (cond: Boolean) => [A] => (doThing: F[A]) =>
+    (A: Applicative[F]) ?=> doThing.unless(cond)
+
+  given Applicative[List] with
+    def pure[A](a: A): List[A] = List(a)
+    def liftA2[A, B, C](f: A => B => C) = (fa: List[A]) => (fb: List[B]) =>
+      for
+        a <- fa
+        b <- fb
+      yield f(a)(b)
 
   given Applicative[Option] with
     def pure[A](a: A): Option[A] = Option(a)

@@ -21,6 +21,10 @@ end Functor
 object Functor:
   def map[F[_]](using Functor[F]) = [A, B] => (f: A => B) => (fa: F[A]) => fa.map(f)
 
+  extension [F[_], A, B](f: A => B)
+    @targetName("fmap")
+    def `<$>`(fa: F[A])(using Functor[F]): F[B] = fa map f
+
   extension [F[_], A, B](a: A)
     @targetName("voidRight")
     def `<$`(fb: F[B])(using Functor[F]): F[A] = fb.map(const(a))
