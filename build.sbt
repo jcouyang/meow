@@ -5,7 +5,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "meow",
-    version := "0.3.0",
+    version := dhall.config.version,
 
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit" % "0.7.21" % Test,
@@ -17,6 +17,12 @@ lazy val root = project
       "-Ykind-projector",
       "-rewrite",
       "-indent",
-      "-language:implicitConversions"),
+      "-language:implicitConversions",
+      "-siteroot", "docs",
+      "-d", "docs/_site",
+      "-project-version", dhall.config.version,
+      "-project-url", "https://github.com/jcouyang/meow",
+      "-Yerased-terms",
+    ),
     testFrameworks += new TestFramework("munit.Framework"),
   )
