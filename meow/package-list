@@ -1,0 +1,22 @@
+$dokka.format:html-v1
+$dokka.linkExtenstion:html
+$dokka.location:docs.index.md////PointingToDeclaration/docs/index.html
+$dokka.location:api////PointingToDeclaration/__api__api/index.html
+$dokka.location:meow////PointingToDeclaration/meowmeow//[]api/meow.html
+$dokka.location:meow.prelude$////PointingToDeclaration/prelude$meow.prelude$//[]api/meow/prelude$.html
+$dokka.location:meow.control////PointingToDeclaration/controlmeow.control//[]api/meow/control.html
+$dokka.location:meow.control.Alternative////PointingToDeclaration/Alternativemeow.control.Alternative//[]api/meow/control/Alternative.html
+$dokka.location:meow.control.Applicative////PointingToDeclaration/Applicativemeow.control.Applicative//[]api/meow/control/Applicative.html
+$dokka.location:meow.control.Applicative$////PointingToDeclaration/Applicative$meow.control.Applicative$//[]api/meow/control/Applicative$.html
+$dokka.location:meow.control.Lan////PointingToDeclaration/Lanmeow.control.Lan//[]api/meow/control/Lan.html
+$dokka.location:meow.control.Lan$////PointingToDeclaration/Lan$meow.control.Lan$//[]api/meow/control/Lan$.html
+$dokka.location:meow.control.Monad////PointingToDeclaration/Monadmeow.control.Monad//[]api/meow/control/Monad.html
+$dokka.location:meow.control.Monad$////PointingToDeclaration/Monad$meow.control.Monad$//[]api/meow/control/Monad$.html
+$dokka.location:meow.control.Ran////PointingToDeclaration/Ranmeow.control.Ran//[]api/meow/control/Ran.html
+$dokka.location:meow.control.Ran$////PointingToDeclaration/Ran$meow.control.Ran$//[]api/meow/control/Ran$.html
+$dokka.location:meow.data////PointingToDeclaration/datameow.data//[]api/meow/data.html
+$dokka.location:meow.data.Functor////PointingToDeclaration/Functormeow.data.Functor//[]api/meow/data/Functor.html
+$dokka.location:meow.data.Functor$////PointingToDeclaration/Functor$meow.data.Functor$//[]api/meow/data/Functor$.html
+$dokka.location:index.md////PointingToDeclaration/index.html
+
+
