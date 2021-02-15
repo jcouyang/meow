@@ -1,0 +1,76 @@
+name: Release
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  doc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v12
+      with:
+        nix_path: nixpkgs=channel:nixos-20.09
+    - name: Cache Coursier
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/coursier
+        key: ${{ runner.os }}-sbt-cache-${{ hashFiles('**/build.sbt') }}
+    - name: Cache Sbt
+      uses: actions/cache@v1
+      with:
+        path: ~/.sbt
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+    - name: Checkout Docs
+      uses: actions/checkout@v2
+      with:
+        ref: gh-pages
+        path: gh-pages
+    - name: doc
+      run: nix-shell --run 'sbt doc'
+    - name: publish
+      run: |
+        cp -r docs/_site/* gh-pages/
+        cd gh-pages
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "generated doc"
+        git push
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Dhall
+      uses: dhall-lang/setup-dhall@v4
+    - uses: cachix/install-nix-action@v12
+      with:
+        nix_path: nixpkgs=channel:nixos-20.09
+    - name: Cache Coursier
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/coursier
+        key: ${{ runner.os }}-sbt-cache-${{ hashFiles('**/build.sbt') }}
+    - name: Cache Sbt
+      uses: actions/cache@v1
+      with:
+        path: ~/.sbt
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+    - env:
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       GPG_SEC: ${{ secrets.GPG_SEC }}
+       GPG_PUB: ${{ secrets.GPG_PUB }}
+       PGP_PASS: ${{ secrets.PGP_PASS }}
+       SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+       SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
+      run: |
+        LAST_RELEASE=$(hub release -L 1)
+        LOCAL_VERSION=$(dhall text <<< 'let a = ./app.dhall in "v${a.version}"')
+        echo "main version is $LAST_RELEASE and current version is $LOCAL_VERSION"
+        if [ $LAST_RELEASE != $LOCAL_VERSION ];then
+          mkdir -p .gnupg
+          echo $GPG_SEC | base64 --decode > .gnupg/secring.asc
+          echo $GPG_PUB | base64 --decode > .gnupg/pubring.asc
+          nix-shell --run 'sbt +releaseEarly'
+          hub release create -m "${LOCAL_VERSION}" "${LOCAL_VERSION}"
+        fi

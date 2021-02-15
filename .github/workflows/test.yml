@@ -1,0 +1,28 @@
+name: Build and Test
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    type: [ synchronize ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v12
+      with:
+        nix_path: nixpkgs=channel:nixos-20.09
+    - name: Cache Coursier
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/coursier
+        key: ${{ runner.os }}-sbt-cache-${{ hashFiles('**/build.sbt') }}
+    - name: Cache Sbt
+      uses: actions/cache@v1
+      with:
+        path: ~/.sbt
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+    - name: Test
+      run: nix-shell --run 'sbt +test'
