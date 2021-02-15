@@ -6,6 +6,7 @@ import org.dhallj.codec.Decoder._
 
 case class Config(
   version: String,
+  scalaVersion: String,
 )
 object dhall {
   lazy val config = {
