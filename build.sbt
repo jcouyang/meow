@@ -23,3 +23,23 @@ lazy val root = project
     ),
     testFrameworks += new TestFramework("munit.Framework"),
   )
+
+inScope(Scope.GlobalScope)(
+  List(
+    organization := "us.oyanglul",
+    licenses := Seq("Apache License 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+    homepage := Some(url("https://github.com/jcouyang/meow")),
+    developers := List(
+      Developer("jcouyang", "Jichao Ouyang", "oyanglulu@gmail.com", url("https://github.com/jcouyang"))
+    ),
+    scmInfo := Some(
+      ScmInfo(
+        url("https://github.com/jcouyang/meow"),
+        "scm:git@github.com:jcouyang/meow.git"
+      )
+    ),
+    pgpPublicRing := file(".") / ".gnupg" / "pubring.asc",
+    pgpSecretRing := file(".") / ".gnupg" / "secring.asc",
+    releaseEarlyWith := SonatypePublisher,
+  )
+)
