@@ -24,4 +24,4 @@ project/plugins/project/
 project/metals.sbt
 project/project/
 .idea
-docs/
+docs/_site/

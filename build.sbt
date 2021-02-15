@@ -8,9 +8,9 @@ lazy val root = project
       "org.scalameta" %% "munit" % "0.7.21" % Test,
       "org.scalameta" %% "munit-scalacheck" % "0.7.21" % Test,
     ),
-    // To make the default compiler and REPL use Dotty
     scalaVersion := dhall.config.scalaVersion,
-    scalacOptions ++= Seq(
+    crossScalaVersions := List(dhall.config.scalaVersion),
+    Compile / scalacOptions ++= Seq(
       "-Ykind-projector",
       "-rewrite",
       "-indent",
@@ -20,7 +20,6 @@ lazy val root = project
       "-siteroot", "docs",
       "-d", "docs/_site",
       "-project-version", dhall.config.version,
-      "-project-url", "https://github.com/jcouyang/meow",
     ),
     testFrameworks += new TestFramework("munit.Framework"),
   )
