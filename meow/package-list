@@ -12,6 +12,8 @@ $dokka.location:meow.control.Lan////PointingToDeclaration/Lanmeow.control.Lan//[
 $dokka.location:meow.control.Lan$////PointingToDeclaration/Lan$meow.control.Lan$//[]api/meow/control/Lan$.html
 $dokka.location:meow.control.Monad////PointingToDeclaration/Monadmeow.control.Monad//[]api/meow/control/Monad.html
 $dokka.location:meow.control.Monad$////PointingToDeclaration/Monad$meow.control.Monad$//[]api/meow/control/Monad$.html
+$dokka.location:meow.control.MonadError////PointingToDeclaration/MonadErrormeow.control.MonadError//[]api/meow/control/MonadError.html
+$dokka.location:meow.control.MonadError$////PointingToDeclaration/MonadError$meow.control.MonadError$//[]api/meow/control/MonadError$.html
 $dokka.location:meow.control.Ran////PointingToDeclaration/Ranmeow.control.Ran//[]api/meow/control/Ran.html
 $dokka.location:meow.control.Ran$////PointingToDeclaration/Ran$meow.control.Ran$//[]api/meow/control/Ran$.html
 $dokka.location:meow.data////PointingToDeclaration/datameow.data//[]api/meow/data.html
