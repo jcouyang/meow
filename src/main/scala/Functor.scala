@@ -2,6 +2,7 @@ package meow
 package data
 
 import scala.annotation.targetName
+import scala.concurrent.{ExecutionContext,Future}
 import Function._
 
 trait Functor[F[_]]:
@@ -38,5 +39,14 @@ object Functor:
   given Functor[List] with
     def fmap[A, B](f: A => B): List[A] => List[B] = (la: List[A]) => la.map(f)
 
+  given Functor[Vector] with
+    def fmap[A, B](f: A => B): Vector[A] => Vector[B] = (la: Vector[A]) => la.map(f)
+
   given [R]: Functor[(R, *)] with
     def fmap[A, B](f: A => B): Tuple2[R, A] => (R, B) = (ta: (R, A)) => (ta._1, f(ta._2))
+
+  given [E]: Functor[Either[E, *]] with
+    def fmap[A, B](f: A => B): Either[E, A] => Either[E, B] = (ea: Either[E, A]) => ea.map(f)
+
+  given (using ExecutionContext): Functor[Future] with
+    def fmap[A, B](f: A => B): Future[A] => Future[B] = (ea: Future[A]) => ea.map(f)

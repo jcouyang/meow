@@ -2,10 +2,9 @@ package meow
 
 import munit._
 import org.scalacheck.Prop._
+import prelude.{~>}
 
-type ~>[-F[_],+G[_]] = [A] => F[A] => G[A]
-
-class FunctionK extends munit.FunSuite with ScalaCheckSuite{
+class FunctionK extends munit.FunSuite with ScalaCheckSuite:
   
   val optionToList: Option ~> List = [A] => (a: Option[A]) => a.toList
   val listToVector: List ~> Vector = [A] => (a: List[A]) => a.toVector
@@ -22,4 +21,3 @@ class FunctionK extends munit.FunSuite with ScalaCheckSuite{
         listToVector(optionToList(Some(a))) == Vector(a)
       }
   }
-}

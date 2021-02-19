@@ -38,13 +38,15 @@ class ApplicativeSpec extends munit.ScalaCheckSuite:
     val fa = pure[Option](1)
     val fb: Option[Int] = pure(2)
     val fc: Option[Int] = pure(3)
+    val f = (x: Int) => (y: Int) => x + y
     val ff = liftA[Option]((x:Int) => x +1)
-    val ff2 = liftA2[Option]((x: Int) => (y: Int) => x + y)
+    val ff2 = liftA2[Option](f)
     val ff3 = liftA3[Option]((x: Int) => (y: Int) => (z: Int) => x + y + z)
 
     assertEquals(ff(fa), Option(2))
     assertEquals(ff2(fa)(fb), Option(3))
     assertEquals(ff3(fa)(fb)(fc), Option(6))
+    assertEquals(f `<$>` fa <*> fb, Option(3))
 
   }
 end ApplicativeSpec

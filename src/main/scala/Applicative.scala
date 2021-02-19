@@ -3,7 +3,7 @@ package control
 
 import data.Functor
 import control._
-
+import scala.concurrent.{ExecutionContext,Future}
 import scala.annotation.targetName
 import Function._
 
@@ -12,7 +12,6 @@ trait Applicative[F[_]](using functor: Functor[F]):
   def pure[A](a: A): F[A]
   def liftA2[A, B, C](f: A => B => C): F[A] => F[B] => F[C]
 
-  export functor.fmap
   extension [A, B](fab: F[A => B])
     @targetName("ap")
     infix def <*>(fa: F[A]): F[B] = liftA2(identity[A => B])(fab)(fa)
@@ -58,6 +57,14 @@ object Applicative:
         b <- fb
       yield f(a)(b)
 
+  given Applicative[Vector] with
+    def pure[A](a: A): Vector[A] = Vector(a)
+    def liftA2[A, B, C](f: A => B => C) = (fa: Vector[A]) => (fb: Vector[B]) =>
+      for
+        a <- fa
+        b <- fb
+      yield f(a)(b)
+
   given Applicative[Option] with
     def pure[A](a: A): Option[A] = Option(a)
     def liftA2[A, B, C](f: A => B => C) = (oa: Option[A]) => (ob: Option[B]) =>
@@ -67,4 +74,19 @@ object Applicative:
           case None => None
         case None => None
 
+  given (using ExecutionContext): Applicative[Future] with
+    def pure[A](a: A): Future[A] = Future(a)
+    def liftA2[A, B, C](f: A => B => C) = (fa: Future[A]) => (fb: Future[B]) =>
+      for
+        a <- fa
+        b <- fb
+      yield f(a)(b)
+
+  given [E]: Applicative[Either[E, *]] with
+    def pure[A](a: A): Either[E, A] = Right(a)
+    def liftA2[A, B, C](f: A => B => C) = (fa: Either[E, A]) => (fb: Either[E, B]) =>
+      for
+        a <- fa
+        b <- fb
+      yield f(a)(b)
 end Applicative

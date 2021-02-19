@@ -3,12 +3,13 @@ package control
 
 import data._
 import scala.annotation.targetName
+import scala.concurrent.{Future, ExecutionContext}
 import Functor._
 
 trait Monad[F[_]](using applicative: Applicative[F]):
   def bind[A, B](f: A => F[B]): F[A] => F[B]
 
-  export applicative.{pure, liftA2}
+  //export applicative.{pure, liftA2}
 
   extension [A, B](fa: F[A])
     def flatMap(f: A => F[B]): F[B] = bind(f)(fa)
@@ -44,3 +45,9 @@ object Monad:
 
   given Monad[List] with
     def bind[A, B](f: A => List[B]): List[A] => List[B] = (oa: List[A]) => oa.flatMap(f)
+
+  given [E]: Monad[Either[E, *]] with
+    def bind[A, B](f: A => Either[E, B]): Either[E, A] => Either[E, B] = (oa: Either[E, A]) => oa.flatMap(f)
+
+  given (using ExecutionContext): Monad[Future] with
+    def bind[A, B](f: A => Future[B]): Future[A] => Future[B] = (oa: Future[A]) => oa.flatMap(f)
