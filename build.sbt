@@ -1,15 +1,15 @@
+import scala.util.Properties.envOrElse
+
 lazy val root = project
   .in(file("."))
   .settings(
     name := "meow",
-    version := dhall.config.version,
-
+    version := s"${dhall.config.version}.${envOrElse("GITHUB_RUN_NUMBER", "dev")}",
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.21" % Test,
-      "org.scalameta" %% "munit-scalacheck" % "0.7.21" % Test,
+      "org.scalameta" %% "munit" % "0.7.22" % Test,
+      "org.scalameta" %% "munit-scalacheck" % "0.7.22" % Test,
     ),
     scalaVersion := dhall.config.scalaVersion,
-    crossScalaVersions := List(dhall.config.scalaVersion),
     Compile / scalacOptions ++= Seq(
       "-Ykind-projector",
       "-rewrite",
