@@ -22,6 +22,4 @@ trait Alternative[F[_]](using applicative: Applicative[F]):
   private def someV[A](v: F[A]): F[List[A]] = applicative.liftA2((x: A) => (xs: List[A]) => x::xs)(v)(manyV(v))
 
 end Alternative
-
-
 // object Alternative:

@@ -6,6 +6,7 @@ import scala.annotation.targetName
 import scala.concurrent.{ExecutionContext,Future}
 import Functor._
 
+
 trait MonadError[E, M[_]](using monad: Monad[M]):
   def throwError[A](e: E): M[A]
   def catchError[A](ma: M[A]): (E => M[A]) => M[A]

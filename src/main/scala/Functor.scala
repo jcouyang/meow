@@ -5,6 +5,8 @@ import scala.annotation.targetName
 import scala.concurrent.{ExecutionContext,Future}
 import Function._
 
+case class Identity[A](run: A)
+
 trait Functor[F[_]]:
   def fmap[A, B](f: A => B): F[A] => F[B]
   extension [A, B](fa: F[A])
