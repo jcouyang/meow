@@ -20,6 +20,15 @@ object ReaderT:
     def bind[A, B](f: A => ReaderT[R, M, B]): ReaderT[R, M, A] => ReaderT[R, M, B] = ma =>
       (r: R) => monad.bind((a: A) => f(a)(r))(ma(r))
 
+  given [R]: MonadTrans[[M[_], A] =>> ReaderT[R, M, A]] with
+    def lift[M[_], A](using monad: Monad[M]): M[A] => ReaderT[R, M, A] = Function.const[M[A], R]
+
+  given [E, R, M[_]:Applicative:Functor:Monad](using me: MonadError[E, M], mt: MonadTrans[[M[_], A] =>> ReaderT[R, M, A]]): MonadError[E, ReaderT[R, M, *]] with
+    def throwError[A](e: E): ReaderT[R,M,A] = mt.lift(me.throwError(e))
+    def catchError[A](ma: ReaderT[R, M, A]): (E => ReaderT[R, M, A]) => ReaderT[R, M, A] = f =>
+     (r: R) => me.catchError(ma(r))((e: E) => f(e)(r))
+
+
   given [R, M[_]: Monad:Applicative:Functor]: MonadReader[R, ReaderT[R, M, *]] with
     def ask = ReaderT.ask[R,M]
     def local[A](rr: R => R) = (ma: ReaderT[R, M, A]) => (r: R) => ma(rr(r))
