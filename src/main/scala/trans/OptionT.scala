@@ -20,6 +20,11 @@ object OptionT:
         case None => monad.pure(None)
       }
 
+  given [E, M[_]:Functor:Applicative:Monad](using me: MonadError[E, M]): MonadError[E, OptionT[M, *]] with
+    def throwError[A](e: E): OptionT[M, A] = me.fmap(Option.apply[A])(me.throwError[A](e))
+    def catchError[A](ma: OptionT[M, A]): (E => OptionT[M, A]) => OptionT[M, A] = f =>
+      me.catchError(ma)((e: E) => f(e))
+
   given [M[_]: Monad]: MonadTrans[OptionT] with
     def lift[M[_], A](using Monad[M]) = (ma: M[A]) => (ma.map(Option.apply))
 

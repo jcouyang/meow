@@ -8,13 +8,14 @@ import Functor._
 
 
 trait MonadError[E, M[_]](using monad: Monad[M]):
+  export monad._
   def throwError[A](e: E): M[A]
   def catchError[A](ma: M[A]): (E => M[A]) => M[A]
   extension [A](ma: M[A])
-    def catchError(f: E => M[A]): M[A] = this.catchError[A](ma)(f)
+    def recover(f: E => M[A]): M[A] = catchError[A](ma)(f)
 
 object MonadError:
-  def catchError[M[_], E, A](ma: M[A])(using MonadError[E, M]): (E => M[A]) => M[A] = ma.catchError(_)
+  def catchError[M[_], E, A](ma: M[A])(using me:MonadError[E, M]): (E => M[A]) => M[A] = me.catchError(ma)(_)
   def throwError[M[_], E](e: E) = [A] => (m:MonadError[E, M]) ?=> m.throwError[A](e)
 
   given MonadError[Unit, Option] with
