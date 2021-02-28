@@ -19,7 +19,7 @@ class Filter {
   }
 
   static get defaultFilters() {
-    return scala3DocData.filterDefaults
+    return scaladocData.filterDefaults
   }
 
   get value() {
