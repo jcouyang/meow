@@ -14,11 +14,19 @@ $dokka.location:meow.control.Monad////PointingToDeclaration/Monadmeow.control.Mo
 $dokka.location:meow.control.Monad$////PointingToDeclaration/Monad$meow.control.Monad$//[]api/meow/control/Monad$.html
 $dokka.location:meow.control.MonadError////PointingToDeclaration/MonadErrormeow.control.MonadError//[]api/meow/control/MonadError.html
 $dokka.location:meow.control.MonadError$////PointingToDeclaration/MonadError$meow.control.MonadError$//[]api/meow/control/MonadError$.html
+$dokka.location:meow.control.MonadReader////PointingToDeclaration/MonadReadermeow.control.MonadReader//[]api/meow/control/MonadReader.html
+$dokka.location:meow.control.MonadReader$////PointingToDeclaration/MonadReader$meow.control.MonadReader$//[]api/meow/control/MonadReader$.html
+$dokka.location:meow.control.MonadTrans////PointingToDeclaration/MonadTransmeow.control.MonadTrans//[]api/meow/control/MonadTrans.html
+$dokka.location:meow.control.MonadTrans$////PointingToDeclaration/MonadTrans$meow.control.MonadTrans$//[]api/meow/control/MonadTrans$.html
 $dokka.location:meow.control.Ran////PointingToDeclaration/Ranmeow.control.Ran//[]api/meow/control/Ran.html
 $dokka.location:meow.control.Ran$////PointingToDeclaration/Ran$meow.control.Ran$//[]api/meow/control/Ran$.html
+$dokka.location:meow.control.trans////PointingToDeclaration/transmeow.control.trans//[]api/meow/control/trans.html
+$dokka.location:meow.control.trans.OptionT$package$$OptionT$////PointingToDeclaration/OptionT$meow.control.trans.OptionT$package$.OptionT$//[]api/meow/control/trans/OptionT$package$$OptionT$.html
+$dokka.location:meow.control.trans.ReaderT$package$$ReaderT$////PointingToDeclaration/ReaderT$meow.control.trans.ReaderT$package$.ReaderT$//[]api/meow/control/trans/ReaderT$package$$ReaderT$.html
 $dokka.location:meow.data////PointingToDeclaration/datameow.data//[]api/meow/data.html
 $dokka.location:meow.data.Functor////PointingToDeclaration/Functormeow.data.Functor//[]api/meow/data/Functor.html
 $dokka.location:meow.data.Functor$////PointingToDeclaration/Functor$meow.data.Functor$//[]api/meow/data/Functor$.html
+$dokka.location:meow.data.Identity////PointingToDeclaration/Identitymeow.data.Identity//[]api/meow/data/Identity.html
 $dokka.location:index.md////PointingToDeclaration/index.html
 
 
