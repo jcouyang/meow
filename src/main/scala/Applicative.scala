@@ -7,8 +7,7 @@ import scala.concurrent.{ExecutionContext,Future}
 import scala.annotation.targetName
 import Function._
 
-
-trait Applicative[F[_]](using functor: Functor[F]):
+trait Applicative[F[_]:Functor]:
   def pure[A](a: A): F[A]
   def liftA2[A, B, C](f: A => B => C): F[A] => F[B] => F[C]
 

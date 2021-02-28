@@ -5,7 +5,7 @@ import data._
 import scala.annotation.targetName
 import Functor._
 
-trait Alternative[F[_]](using applicative: Applicative[F]):
+trait Alternative[F[_]:Applicative]:
   def empty[A]: F[A]
   
   extension [A, B](fa: F[A])
@@ -16,8 +16,8 @@ trait Alternative[F[_]](using applicative: Applicative[F]):
     def some: F[List[A]] = manyV[A](fa)
     def many: F[List[A]] = someV[A](fa)
 
-  private def manyV[A](v: F[A]): F[List[A]] = someV[A](v) <|> applicative.pure(List[A]())
-  private def someV[A](v: F[A]): F[List[A]] = applicative.liftA2((x: A) => (xs: List[A]) => x::xs)(v)(manyV(v))
+  private def manyV[A](v: F[A]): F[List[A]] = someV[A](v) <|> Applicative.pure(List[A]())
+  private def someV[A](v: F[A]): F[List[A]] = Applicative.liftA2((x: A) => (xs: List[A]) => x::xs)(v)(manyV(v))
 
 end Alternative
 // object Alternative:

@@ -6,7 +6,7 @@ import scala.annotation.targetName
 import scala.concurrent.{Future, ExecutionContext}
 import Functor._
 
-trait Monad[F[_]](using applicative: Applicative[F]):
+trait Monad[F[_]:Applicative]:
   def bind[A, B](f: A => F[B]): F[A] => F[B]
 
   extension [A, B](fa: F[A])
@@ -37,8 +37,8 @@ end Monad
 object Monad:
   def flatMap[M[_]] = [A, B] => (f: A => M[B]) => (ma: M[A]) => (M: Monad[M]) ?=> ma >>= f
   def flatten[M[_], A] = (mma: M[M[A]]) => (M: Monad[M]) ?=> mma.flatten
-  def liftM[M[_]:Monad](using F:Functor[M]) = [A, B] => (f: A => B) => (ma: M[A]) =>
-    F.map(ma)(f)
+  def liftM[M[_]:Monad:Functor] = [A, B] => (f: A => B) => (ma: M[A]) =>
+    Functor.map(f)(ma)
 
   given Monad[Option] with
     def bind[A, B](f: A => Option[B]): Option[A] => Option[B] = (oa: Option[A]) => oa.flatMap(f)

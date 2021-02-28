@@ -7,10 +7,10 @@ import data._
 class Monad m => MonadReader r m | m -> r where
 ```
 */
-trait MonadReader[R, M[_]:Functor](using monad: Monad[M]):
+trait MonadReader[R, M[_]:Functor:Monad]:
   def ask: M[R]
   def local[A](rr: R => R): M[A] => M[A]
-  def reader[A](f: R => A): M[A] = summon[Functor[M]].map(ask)(f)
+  def reader[A](f: R => A): M[A] = Functor.map(f)(ask)
 
 object MonadReader {
 
