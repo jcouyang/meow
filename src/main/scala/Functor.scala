@@ -5,7 +5,8 @@ import scala.annotation.targetName
 import scala.concurrent.{ExecutionContext,Future}
 import Function._
 
-case class Identity[A](run: A)
+opaque type Identity[A] = A
+
 /**
   * A type `F` is a Functor if it provides a function `fmap` which, given any types `A` and `B`
   * lets you apply any function from ~A => B~ to turn an `F[A]` into an `F[B]`, preserving the
