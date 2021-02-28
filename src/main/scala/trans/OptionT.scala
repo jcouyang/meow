@@ -17,17 +17,17 @@ object OptionT:
     def bind[A, B](f: A => OptionT[M, B]): OptionT[M, A] => OptionT[M, B] = (ma: OptionT[M, A]) =>
       monad.flatMap(ma) {
         case Some(v) => f(v)
-        case None => monad.pure(None)
+        case None => Applicative.pure(None)
       }
 
   given [E, M[_]:Functor:Applicative:Monad](using me: MonadError[E, M]): MonadError[E, OptionT[M, *]] with
-    def throwError[A](e: E): OptionT[M, A] = me.fmap(Option.apply[A])(me.throwError[A](e))
+    def throwError[A](e: E): OptionT[M, A] = Functor.map(Option.apply[A])(me.throwError[A](e))
     def catchError[A](ma: OptionT[M, A]): (E => OptionT[M, A]) => OptionT[M, A] = f =>
       me.catchError(ma)((e: E) => f(e))
 
-  given [M[_]: Monad]: MonadTrans[OptionT] with
-    def lift[M[_], A](using Monad[M]) = (ma: M[A]) => (ma.map(Option.apply))
+  given [M[_]:Functor:Applicative:Monad]: MonadTrans[OptionT, M] with
+    def lift[A](ma: M[A]) = (Functor.map(Option.apply[A])(ma))
 
   given [R, M[_]:Monad:Applicative:Functor](using readM: MonadReader[R, M]): MonadReader[R, OptionT[M, *]] with
-    def ask: OptionT[M, R] = readM.map(readM.ask)(Option.apply)
+    def ask: OptionT[M, R] = Functor.map(Option.apply[R])(readM.ask)
     def local[A](rr: R => R) = (ma: OptionT[M, A]) => readM.local(rr)(ma)

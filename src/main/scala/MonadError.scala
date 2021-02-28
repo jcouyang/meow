@@ -8,7 +8,6 @@ import Functor._
 
 
 trait MonadError[E, M[_]](using monad: Monad[M]):
-  export monad._
   def throwError[A](e: E): M[A]
   def catchError[A](ma: M[A]): (E => M[A]) => M[A]
   extension [A](ma: M[A])

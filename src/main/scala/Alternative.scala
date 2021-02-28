@@ -8,8 +8,6 @@ import Functor._
 trait Alternative[F[_]](using applicative: Applicative[F]):
   def empty[A]: F[A]
   
-  //export applicative.{pure, liftA2}
-
   extension [A, B](fa: F[A])
 
     @targetName("alt")

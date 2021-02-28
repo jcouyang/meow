@@ -3,7 +3,7 @@ title: Meow
 layout: main
 ---
 
-Experimental catless Dotty/Scala 3 in Category Theory, meow ~
+Experimental catless Scala 3 in Category Theory, meow ~
 
 # Rationale
 The most frustration thing about using Cats from my teammates complains are always about
