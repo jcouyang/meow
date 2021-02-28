@@ -1,7 +1,9 @@
 name: Release
 on:
-  push:
+  workflow_run:
+    workflows: ["Build and Test"]
     branches: [ master ]
+    types: [ completed ]
 
 jobs:
   doc:
