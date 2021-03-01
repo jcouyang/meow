@@ -27,7 +27,7 @@ trait Functor[F[_]]:
     infix def map(f: A => B): F[B] = fmap(f)(fa)
 
     /** Usually [[this.fmap]] takes function first, `mapFlipped` takes data first
-      * ```scala
+      * @example ```scala
       * fa <#> identity == identity(fa)
       * ```
       */
@@ -35,7 +35,7 @@ trait Functor[F[_]]:
     def <#>(f: A => B): F[B] = fmap(f)(fa)
 
     /** Drop whatever value `A` on left and return `F[B]` on the right
-      * ```scala
+      * @example ```scala
       * Option(1) `$>` 3 == Option(3)
       * ```
       */
@@ -43,7 +43,7 @@ trait Functor[F[_]]:
     infix def `$>`(a: B): F[B] = fmap(const[B, A](a))(fa)
 
     /** Void `F[A]` and return `F[Unit]`
-      * ```scala
+      * @example ```scala
       * Option(2).void == Option(())
       * ```
       */
@@ -53,11 +53,16 @@ end Functor
 
 /** Instances and static functions for [[meow.data.Functor]] */
 object Functor:
+  /** Prefix static version of [[meow.data.Functor#fmap]]
+    * @example ```scala
+    * map[Option](f)(Option(1))
+    * ```
+    */
   def map[F[_]](using Functor[F]) = [A, B] => (f: A => B) => (fa: F[A]) => fa.map(f)
 
   extension [F[_], A, B](f: A => B)
     /** Infix syntax for [[meow.data.Functor#fmap]]
-      * ```scala
+      * @example ```scala
       * (f compose g) `<$>` fa  == (map[Option](f) compose map[Option](g))(fa)
       * ```
       */
@@ -65,8 +70,8 @@ object Functor:
     def `<$>`(fa: F[A])(using Functor[F]): F[B] = fa map f
 
   extension [F[_], A, B](a: A)
-    /** Void right
-      * ```scala
+    /** Void right, pair of [[meow.data.Functor#$>]]
+      * @example ```scala
       * 2 `<$` Option(3) == Option(2)
       * ```
       */
@@ -85,7 +90,7 @@ object Functor:
   given Functor[Vector] with
     def fmap[A, B](f: A => B): Vector[A] => Vector[B] = (la: Vector[A]) => la.map(f)
 
-  given [R]: Functor[(R, *)] with
+  given [R]: Functor[Tuple2[R, *]] with
     def fmap[A, B](f: A => B): Tuple2[R, A] => (R, B) = (ta: (R, A)) => (ta._1, f(ta._2))
 
   given [E]: Functor[Either[E, *]] with
