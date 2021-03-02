@@ -1,4 +1,5 @@
 package meow.control
+package trans
 
 import meow.data.Functor
 

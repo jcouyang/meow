@@ -2,6 +2,7 @@ package meow.control
 package trans
 
 import meow.data._
+import mtl._
 
 opaque type OptionT[M[_], A] = M[Option[A]]
 

@@ -2,6 +2,7 @@ package meow.control
 package trans
 
 import meow.data._
+import mtl._
 
 opaque type ReaderT[R, M[_], A] = R => M[A]
 opaque type Reader[R, A] = ReaderT[R, Identity, A]
@@ -27,7 +28,6 @@ object ReaderT:
     def throwError[A](e: E): ReaderT[R,M,A] = mt.lift(me.throwError(e))
     def catchError[A](ma: ReaderT[R, M, A]): (E => ReaderT[R, M, A]) => ReaderT[R, M, A] = f =>
      (r: R) => me.catchError(ma(r))((e: E) => f(e)(r))
-
 
   given [R, M[_]: Monad:Applicative:Functor]: MonadReader[R, ReaderT[R, M, *]] with
     def ask = ReaderT.ask[R,M]
