@@ -140,14 +140,6 @@ object Applicative:
           case None => None
         case None => None
 
-  given (using ExecutionContext): Applicative[Future] with
-    def pure[A](a: A): Future[A] = Future(a)
-    def liftA2[A, B, C](f: A => B => C) = (fa: Future[A]) => (fb: Future[B]) =>
-      for
-        a <- fa
-        b <- fb
-      yield f(a)(b)
-
   given [E]: Applicative[Either[E, *]] with
     def pure[A](a: A): Either[E, A] = Right(a)
     def liftA2[A, B, C](f: A => B => C) = (fa: Either[E, A]) => (fb: Either[E, B]) =>

@@ -95,6 +95,3 @@ object Functor:
 
   given [E]: Functor[Either[E, *]] with
     def fmap[A, B](f: A => B): Either[E, A] => Either[E, B] = (ea: Either[E, A]) => ea.map(f)
-
-  given (using ExecutionContext): Functor[Future] with
-    def fmap[A, B](f: A => B): Future[A] => Future[B] = (ea: Future[A]) => ea.map(f)

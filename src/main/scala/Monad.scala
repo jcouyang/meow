@@ -39,14 +39,14 @@ map[F](f)(xs) == (xs >>= (pure[F] compose f))
 ```
 and that [[meow.control.Applicative#pure]] and [[meow.control.Applicative#<*>]] satisfy the Applicative functor laws.
   */
-trait Monad[F[_]:Applicative]:
+trait Monad[M[_]:Applicative]:
   /** Sequentially compose two actions, passing any value produced by the first as an argument to the second.
     */
-  def bind[A, B](f: A => F[B]): F[A] => F[B]
+  def bind[A, B](f: A => M[B]): M[A] => M[B]
 
-  extension [A, B](fa: F[A])
+  extension [A, B](fa: M[A])
     /** alias of [[this.>>=]] for `for` comprehension */
-    def flatMap(f: A => F[B]): F[B] = bind(f)(fa)
+    def flatMap(f: A => M[B]): M[B] = bind(f)(fa)
 
     /** Sequentially compose two actions, passing any value produced by the first as an argument to the second.
       * @example ```
@@ -55,19 +55,19 @@ trait Monad[F[_]:Applicative]:
       * ```
       */
     @targetName("bind")
-    def >>=(f: A => F[B]): F[B] = bind(f)(fa)
+    def >>=(f: A => M[B]): M[B] = bind(f)(fa)
     /** Sequentially compose two actions, discarding any value produced by the first, like sequencing operators (such as the semicolon) in imperative languages.
       * @example ```
       *  Option(1) >> Option(2) == Option(2)
       * ```
       */
     @targetName("dropLeft")
-    def >>(fb: F[B]): F[B] = fa >>= {(_: A) => fb}
+    def >>(fb: M[B]): M[B] = fa >>= {(_: A) => fb}
 
-  extension [A, B, C](f: A => F[B])
+  extension [A, B, C](f: A => M[B])
     /** Flipped [[#>>=]] */
     @targetName("bindFlipped")
-    def =<<(ma: F[A]): F[B] = ma >>= f
+    def =<<(ma: M[A]): M[B] = ma >>= f
     /** Left-to-right composition of Kleisli arrows.
       * @example ```
       * val ff1 = (x:Int) => Option(x +1)
@@ -76,7 +76,7 @@ trait Monad[F[_]:Applicative]:
       * ```
       */
     @targetName("composeKleisli")
-    def >=>(ff: B => F[C]): A => F[C] = (a: A) => f(a) >>= ff
+    def >=>(ff: B => M[C]): A => M[C] = (a: A) => f(a) >>= ff
     /** Right-to-left composition of Kleisli arrows.
       * @example ```
       * val ff1 = (x:Int) => Option(x +1)
@@ -85,9 +85,9 @@ trait Monad[F[_]:Applicative]:
       * ```
       */
     @targetName("composeKleisliFlipped")
-    def <=<(ff: C => F[A]): C => F[B] = (c: C) => ff(c) >>= f
+    def <=<(ff: C => M[A]): C => M[B] = (c: C) => ff(c) >>= f
 
-  extension [A](ffa: F[F[A]])
+  extension [A](ffa: M[M[A]])
      /** Flatten a nested Monad
        * @example
        * ```
@@ -113,6 +113,3 @@ object Monad:
 
   given [E]: Monad[Either[E, *]] with
     def bind[A, B](f: A => Either[E, B]): Either[E, A] => Either[E, B] = (oa: Either[E, A]) => oa.flatMap(f)
-
-  given (using ExecutionContext): Monad[Future] with
-    def bind[A, B](f: A => Future[B]): Future[A] => Future[B] = (oa: Future[A]) => oa.flatMap(f)

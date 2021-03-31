@@ -29,7 +29,3 @@ object MonadError:
     inline def catchError[A](ma: Either[E, A]) = f => inline ma match
       case Left(e) => f(e)
       case a => a
-
-  given (using ExecutionContext) : MonadError[Throwable, Future] with
-    def throwError[A](e: Throwable): Future[A] = Future.failed[A](e)
-    def catchError[A](ma: Future[A]):(Throwable => Future[A]) => Future[A] = f => ma.recoverWith({case e=>f(e)})
