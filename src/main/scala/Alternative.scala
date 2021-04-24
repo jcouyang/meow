@@ -25,13 +25,11 @@ trait Alternative[F[_]:Applicative]:
       @targetName("alt")
       def <|>(fb: => List[A]): List[A] = fa concat fb
 
-
   given Alternative[Vector] with
     def empty[A]: Vector[A] = Vector()
     extension [A, B](fa: Vector[A])
       @targetName("alt")
       def <|>(fb: => Vector[A]): Vector[A] = fa concat fb
-
 
   given Alternative[Option] with
     def empty[A]: Option[A] = None

@@ -20,6 +20,9 @@ object IO:
   def fromFuture[A](f: Future[A]): IO[A] = () => f
   def toFuture[A](io: IO[A]): Future[A] = io()
 
+  extension [A](io: IO[A])
+    def run: Future[A] = toFuture(io)
+
   given (using ExecutionContext): Functor[IO] with
     def fmap[A, B](f: A => B): IO[A] => IO[B] = (ea: IO[A]) => () => ea().map(f)
 

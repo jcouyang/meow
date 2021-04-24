@@ -6,8 +6,8 @@ lazy val root = project
     name := "meow",
     version := s"${dhall.config.version}.${envOrElse("GITHUB_RUN_NUMBER", "dev")}",
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.22" % Test,
-      "org.scalameta" %% "munit-scalacheck" % "0.7.22" % Test,
+      "org.scalameta" %% "munit" % "0.7.23" % Test,
+      "org.scalameta" %% "munit-scalacheck" % "0.7.23" % Test,
     ),
     scalaVersion := dhall.config.scalaVersion,
     Compile / scalacOptions ++= Seq(

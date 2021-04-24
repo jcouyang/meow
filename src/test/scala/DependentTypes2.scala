@@ -37,7 +37,7 @@ class DependentTypes2 extends munit.FunSuite:
 
   // // inline Vector
   import scala.compiletime.ops.int
-  import scala.compiletime.{S}
+  import scala.compiletime.ops.int.S
 
   enum Vector[Nat, +A]:
     case Cons[N <: Int, AA](head: AA, tail: Vector[N, AA]) extends Vector[S[N], AA]

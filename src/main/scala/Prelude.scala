@@ -4,6 +4,7 @@ object prelude:
   type ~>[-F[_],+G[_]] = [A] => F[A] => G[A]
 
   export data.Functor.{given,_}
+  export data.IO.{given,_}
   export control.Applicative.{given,_}
   export control.Monad.{given,_}
   export control.mtl.MonadError.{given,_}
