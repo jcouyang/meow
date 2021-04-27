@@ -12,3 +12,5 @@ object prelude:
   export control.trans.MonadTrans.{given,_}
   export control.trans.OptionT.{given,_}
   export control.trans.ReaderT.{given,_}
+
+  export Show.{show}
