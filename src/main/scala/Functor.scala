@@ -4,6 +4,8 @@ package data
 import scala.annotation.targetName
 import scala.concurrent.{ExecutionContext,Future}
 import Function._
+import scala.deriving._
+import scala.compiletime.{erasedValue, summonInline,constValue}
 
 opaque type Identity[A] = A
 
@@ -95,3 +97,60 @@ object Functor:
 
   given [E]: Functor[Either[E, *]] with
     def fmap[A, B](f: A => B): Either[E, A] => Either[E, B] = (ea: Either[E, A]) => ea.map(f)
+
+  // summonInline[Functor[[A]=>>List[A]]]
+
+  type Const = [A] =>> [T] =>> A
+  type Id = [A] =>> A
+
+  inline given genFunctor[F[_]](using m: Mirror.Of[F[Any]]): Functor[F] =
+    val name = constValue[m.MirroredLabel]
+    val functors = summonAsList[m.MirroredElemTypes]
+    inline m match
+      case s: Mirror.SumOf[F[Any]] =>
+        functorCoproduct(s, name, functors)
+      case p: Mirror.ProductOf[F[Any]] =>
+        functorProduct(p, name, functors)
+
+  given Functor[Id] with
+    def fmap[A, B](f: A => B): A => B = (a: A) => f(a)
+
+  given [F[_], G[_]](using ff: Functor[F], fg: Functor[G]): Functor[[t] =>> F[G[t]]] with
+    def fmap[A, B](f: A => B): F[G[A]] => F[G[B]] = (fga: F[G[A]]) => ff.fmap(ga => fg.fmap(f)(ga))(fga)
+
+  given [T]: Functor[Const[T]] with
+    def fmap[A, B](f: A => B): T => T = (ea: T) =>
+      println(s"--const---${ea}")
+      ea
+  inline def derived[F[_]](using m: Mirror.Of[F[Any]])  = genFunctor[F]
+  // type IdOrConst[F[[_]] = [T] =>> F[T] match
+  //   case F[T] => Functor[Id]
+  //   case AnyKind => Functor[Const[T]]
+
+  private inline def summonAsList[T <: Tuple]: List[Functor[[X]=>> Any]] =
+    inline erasedValue[T] match
+      case _: EmptyTuple => Nil
+      case _: (t *: ts) =>
+        summonOne[[X]=>> t, Any].asInstanceOf[Functor[[X]=>>Any]] :: summonAsList[ts]
+
+  private inline def summonOne[F[_], A]: Functor[[X] =>> F[X]] =
+    summonInline[Functor[F]]
+  private def functorCoproduct[F[_]](s: Mirror.SumOf[F[Any]], name: String, functors: List[Functor[[X]=>> Any]]): Functor[F] =
+    new Functor[F] {
+      def fmap[A, B](f: A => B): F[A] => F[B] = (fa: F[A]) =>
+        val ord = s.ordinal(fa.asInstanceOf[F[Any]])
+        functors(ord).fmap(f)(fa).asInstanceOf[F[B]]
+    }
+
+  private def functorProduct[F[_], T](p: Mirror.ProductOf[F[T]], name: String, functors: List[Functor[[X] =>> Any]]): Functor[F] =
+    new Functor[F] {
+      def fmap[A, B](f: A => B): F[A] => F[B] = (fa: F[A]) =>
+        val mapped = fa.asInstanceOf[Product].productIterator.zip(functors.iterator).map{
+          (fa, F) => 
+            println(s"-------${fa}---${F}")
+            F.fmap(f)(fa)
+        }
+        p.fromProduct(Tuple.fromArray(mapped.toArray)).asInstanceOf[F[B]]
+    }
+
+
