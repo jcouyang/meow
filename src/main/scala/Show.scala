@@ -2,6 +2,7 @@ package meow
 
 import scala.deriving._
 import scala.compiletime.{erasedValue, summonInline,constValue}
+import data.Functor
 
 trait Show[A]:
   def show(a: A): String
@@ -58,6 +59,9 @@ object Show:
 
   given [A: Show, B: Show]: Show[Map[A, B]] with
     def show(a: Map[A,B]) = "Map(" ++ a.map{(k,v) => s"${summon[Show[A]].show(k)} -> ${summon[Show[B]].show(v)}"}.mkString(", ") ++ ")"
+
+  given [F[_]] : Show[Functor[F]] with
+    def show(a: Functor[F]) = a.getClass.getName
 
   // given [A: Show,B:Show]: Show[Either[A, B]] = derived
 
