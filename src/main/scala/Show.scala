@@ -3,19 +3,12 @@ package meow
 import scala.deriving._
 import scala.compiletime.{erasedValue, summonInline,constValue}
 import data.Functor
+import generic.*
 
 trait Show[A]:
   def show(a: A): String
 
 object Show:
-  inline given derived[T](using m: Mirror.Of[T]): Show[T] =
-    lazy val showInsts = summonAsList[m.MirroredElemTypes]
-    val name = constValue[m.MirroredLabel]
-    inline m match
-      case s: Mirror.SumOf[T] =>
-        showCoproduct(s, showInsts, name)
-      case p: Mirror.ProductOf[T] =>
-        showProduct(p, showInsts, name)
 
   given Show[Unit] with
     def show(a: Unit) = a.toString
@@ -63,12 +56,14 @@ object Show:
   given [F[_]] : Show[Functor[F]] with
     def show(a: Functor[F]) = a.getClass.getName
 
-  // given [A: Show,B:Show]: Show[Either[A, B]] = derived
-
-  private inline def summonAsList[T <: Tuple]: List[Show[?]] =
-    inline erasedValue[T] match
-      case _: EmptyTuple => Nil
-      case _: (t *: ts) => summonInline[Show[t]] :: summonAsList[ts]
+  inline given derived[T](using m: Mirror.Of[T]): Show[T] =
+    lazy val showInsts = summonAsList[m.MirroredElemTypes, Show]
+    val name = constValue[m.MirroredLabel]
+    inline m match
+      case s: Mirror.SumOf[T] =>
+        showCoproduct(s, showInsts, name)
+      case p: Mirror.ProductOf[T] =>
+        showProduct(p, showInsts, name)
 
   private def showCoproduct[T](s: Mirror.SumOf[T], insts: List[Show[?]], name: String): Show[T] =
     new Show[T] {
@@ -77,7 +72,8 @@ object Show:
         s"${insts(ord).asInstanceOf[Show[T]].show(a)}: ${name}"
     }
 
-  private def showProduct[T](p: Mirror.ProductOf[T], insts: List[Show[?]], name: String): Show[T] =        new Show[T] {
+  private def showProduct[T](p: Mirror.ProductOf[T], insts: List[Show[?]], name: String): Show[T] =
+    new Show[T] {
       def show(a: T): String =
         val elems = prodIterator(a).zip(insts.iterator).map {  // (5)
             case (x, inst) => inst.asInstanceOf[Show[Any]].show(x)
@@ -86,4 +82,5 @@ object Show:
     }
   
   private def prodIterator[T](p: T) = p.asInstanceOf[Product].productIterator
+
   def show[A](a: A)(using s: Show[A]) = s.show(a)
