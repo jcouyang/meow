@@ -5,6 +5,10 @@ layout: main
 
 Catless Category Theory in Scala 3, meow ~
 
+```
+libraryDependencies += "us.oyanglul" %% "meow" % "0.4.+"
+```
+
 # Rationale
 The most frustrating thing about using Cats is always such complaints from my teammates:
 > Q: What's missing? What should I import?
@@ -19,16 +23,16 @@ The most frustrating thing about using Cats is always such complaints from my te
 
 > A: Or, if you don't mind you IDE get even slower, just `import cats.implicits._`.
 
-This is extremely not user-friendly, eventhough for lib maintainer it makes perfect sense that you should know `<+>` should be in SemigroupK.
-But as a user, why should I care where `<+>` is in the package? I should be able to guess that this `Option[_]` and other `Option[_]` can be glue together with `<+>`, I don't need to remember if it is Semigroup, Semigroupal, SemigroupK or Alternative.
+This is extremely not user friendly, even though it makes perfect sense for lib maintainer to know that `<+>` should be in SemigroupK.
+But as a user, why should I care where `<+>` is in the package? I should be able to guess that this `Option[_]` and other `Option[_]` can be glued together with `<+>`, I don't need to remember if it is Semigroup, Semigroupal, SemigroupK or Alternative.
 
 Why can't it be just like Haskell, all I need to know is that I can `<|>` two `Maybe`, I can `>>=` or `<$>` `Maybe` without worrying anything about what to import.
 
 # :heart: for users
 
-Meow is completely new design to be user-friendly, not cat-friendly, by using newest Scala 3 features.
+Meow is a completely new design to be user friendly, not cat friendly, by using the latest Scala 3 features.
 
-Meow provides idiomatic haskell like typeclasses by using functions over methods, contextual binding over hierarchy.
+Meow provides idiomatic haskell-like typeclasses by using functions over methods, contextual binding over hierarchy.
 
 ## Use Typeclasses without worrying about what Typeclasses are
 
@@ -65,7 +69,7 @@ Simply just `derives Functor` and your data type will be mappable over `A`.
 
 [More Details...](https://oyanglul.us/meow)
 
-# For lib maintainer
+# For lib maintainers or curious users
 
 You may want to refresh your Scala 3 knowledge before jump into the source code.
 

@@ -1,1 +1,1 @@
-{ version = "0.3", scalaVersion = "3.0.0-RC3" }
+{ version = "0.4", scalaVersion = "3.0.0" }
