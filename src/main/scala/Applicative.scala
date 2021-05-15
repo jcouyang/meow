@@ -147,4 +147,5 @@ object Applicative:
         a <- fa
         b <- fb
       yield f(a)(b)
+
 end Applicative

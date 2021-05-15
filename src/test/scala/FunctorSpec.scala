@@ -7,11 +7,13 @@ import org.scalacheck.Prop._
 import Function._
 
 class FunctorSpec extends munit.ScalaCheckSuite:
-  case class Nested[A](a: A) derives data.Functor
-  case class F[A](a: A, b: Nested[A], c: List[A], d: Option[String]) derives data.Functor
+  case class Inner[A](a: A)
+  case class Outer[A](a: A, b: Inner[A], c: List[A], d: Option[String]) derives data.Functor
 
   test("derive functor") {
-    assertEquals(map[F]((a: Int) => a + 1)(F(1, Nested(2), List(3,4), Option("hehe"))), F(2, Nested(3), List(4,5), Option("hehe")))
+    assertEquals(
+      map[Outer]((a: Int) => a + 1)(Outer(1, Inner(2), List(3,4), Option("hehe"))),
+      Outer(2, Inner(3), List(4,5), Option("hehe")))
   }
 
   property("Identity") {

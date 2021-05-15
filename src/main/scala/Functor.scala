@@ -2,7 +2,6 @@ package meow
 package data
 
 import scala.annotation.targetName
-import scala.concurrent.{ExecutionContext,Future}
 import Function.*
 import scala.deriving.*
 import scala.compiletime.*
@@ -116,11 +115,11 @@ object Functor:
 
   /*
    * ```scala
-   * case class A(a: Int) derives Functor
+   * case class A[B](a: B) derives Functor
    * assertEquals(A(1).map(_ + 1), A(2))
    * ```
    */
-  inline def derived[F[_]](using m: K1[F])  = genFunctor[F]
+  inline def derived[F[_]](using m: K1[F]): Functor[F]  = genFunctor[F]
 
   private def functorCoproduct[F[_]](s: K1Sum[F], name: String, functors: List[Functor[[X]=>> Any]]): Functor[F] =
     new Functor[F] {
