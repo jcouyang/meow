@@ -21,6 +21,7 @@ object IO:
   def toFuture[A](io: IO[A]): Future[A] = io()
 
   extension [A](io: IO[A])
+    def delay(a: => A)(using ExecutionContext): IO[A] = () => Future(a)
     def run: Future[A] = toFuture(io)
 
   given (using ExecutionContext): Functor[IO] with

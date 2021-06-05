@@ -101,7 +101,7 @@ end Monad
 /** Instances and static functions for [[meow.control.Monad]] */
 object Monad:
   /** Static version of [[meow.control.Monad#flatMap]] */
-  def flatMap[M[_]] = [A, B] => (f: A => M[B]) => (ma: M[A]) => (M: Monad[M]) ?=> ma >>= f
+  def flatMap[M[_]] = [A, B] => (f: A => M[B]) => (M: Monad[M]) ?=> (ma: M[A]) => M.bind(f)(ma)
   /** Static version of [[meow.control.Monad#flatten]] */
   def flatten[M[_], A] = (mma: M[M[A]]) => (M: Monad[M]) ?=> mma.flatten
 

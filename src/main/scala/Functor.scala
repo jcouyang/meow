@@ -59,7 +59,11 @@ object Functor:
     * map[Option](f)(Option(1))
     * ```
     */
-  def map[F[_]](using Functor[F]) = [A, B] => (f: A => B) => (fa: F[A]) => fa.map(f)
+  def map[F[_]] =
+    [A, B]                 =>
+    (f: A => B)            =>
+    (functor: Functor[F]) ?=>
+    (fa: F[A])             => summon[Functor[F]].fmap(f)(fa)
 
   extension [F[_], A, B](f: A => B)
     /** Infix syntax for [[meow.data.Functor#fmap]]

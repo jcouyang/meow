@@ -7,8 +7,8 @@ import mtl._
 opaque type OptionT[M[_], A] = M[Option[A]]
 
 object OptionT:
-  given [M[_]](using functorM: Functor[M]): Functor[OptionT[M, *]] with
-    def fmap[A, B](f: A => B): OptionT[M, A] => OptionT[M, B] = functorM.fmap(Functor.map[Option](f))
+  given [M[_]](using functorM: Functor[M], functorO: Functor[Option]): Functor[OptionT[M, *]] with
+    def fmap[A, B](f: A => B): OptionT[M, A] => OptionT[M, B] = functorM.fmap(functorO.fmap(f))
 
   given [M[_]: Functor](using apM: Applicative[M]): Applicative[OptionT[M, *]] with
     def pure[A](a: A) = apM.pure(Option(a))
