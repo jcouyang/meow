@@ -1,6 +1,6 @@
-package meow
+package meowspec
 
-import prelude.{given, _}
+import meow.prelude.{given, _}
 
 import munit._
 import org.scalacheck.Prop._

@@ -1,7 +1,7 @@
-package meow
+package meowspec
 
-import prelude.{given, _}
-
+import meow.prelude.{given, _}
+import meow.Show
 class ShowSpec extends munit.ScalaCheckSuite:
   enum TestSum derives Show:
     case TestProduct(a: Int, b: String)

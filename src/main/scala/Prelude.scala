@@ -3,7 +3,7 @@ package meow
 object prelude:
   type ~>[-F[_],+G[_]] = [A] => F[A] => G[A]
 
-  export data.Functor.{given,*}
+  export data.Functor.{derived => _, given,*}
   export control.Applicative.{given,*}
   export control.Monad.{given,*}
   export control.mtl.MonadError.{given,*}
@@ -14,5 +14,5 @@ object prelude:
 
   export data.IO.{given,*}
   export Show.{show}
-  export data.Semigroup.{given,*}
-  export data.Monoid.{given,*}
+  export data.Semigroup.{derived => _, given,*}
+  export data.Monoid.{derived => _, given,*}

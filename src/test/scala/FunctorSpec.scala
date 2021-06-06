@@ -1,14 +1,14 @@
-package meow
+package meowspec
 
-import prelude.{given, _}
-
+import meow.prelude.{given, _}
+import meow.data.Functor
 import munit._
 import org.scalacheck.Prop._
 import Function._
 
 class FunctorSpec extends munit.ScalaCheckSuite:
   case class Inner[A](a: A)
-  case class Outer[A](a: A, b: Inner[A], c: List[A], d: Option[String]) derives data.Functor
+  case class Outer[A](a: A, b: Inner[A], c: List[A], d: Option[String]) derives Functor
 
   test("derive functor") {
     assertEquals(
