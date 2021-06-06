@@ -49,3 +49,10 @@ object IO:
         case _ => fb()
       }
 
+  given [A: Semigroup] (using ExecutionContext): Semigroup[IO[A]] with
+    def scombine(x: IO[A], y: IO[A]): IO[A] =
+      Applicative.liftA2[IO]((a: A) => a.<> _)(x)(y)
+
+  given [A: Monoid: Semigroup] (using ExecutionContext): Monoid[IO[A]] with
+    def mempty: IO[A] = Applicative.pure[IO](Monoid.mempty)
+

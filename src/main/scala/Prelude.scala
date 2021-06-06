@@ -3,14 +3,16 @@ package meow
 object prelude:
   type ~>[-F[_],+G[_]] = [A] => F[A] => G[A]
 
-  export data.Functor.{given,_}
-  export control.Applicative.{given,_}
-  export control.Monad.{given,_}
-  export control.mtl.MonadError.{given,_}
+  export data.Functor.{given,*}
+  export control.Applicative.{given,*}
+  export control.Monad.{given,*}
+  export control.mtl.MonadError.{given,*}
 
-  export control.trans.MonadTrans.{given,_}
-  export control.trans.OptionT.{given,_}
-  export control.trans.ReaderT.{given,_}
+  export control.trans.MonadTrans.{given,*}
+  export control.trans.OptionT.{given,*}
+  export control.trans.ReaderT.{given,*}
 
-  export data.IO.{given,_}
+  export data.IO.{given,*}
   export Show.{show}
+  export data.Semigroup.{given,*}
+  export data.Monoid.{given,*}
