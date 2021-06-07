@@ -19,9 +19,9 @@ object IO:
 
   def fromFuture[A](f: Future[A]): IO[A] = () => f
   def toFuture[A](io: IO[A]): Future[A] = io()
+  def delay[A](a: => A)(using ExecutionContext): IO[A] = () => Future(a)
 
   extension [A](io: IO[A])
-    def delay(a: => A)(using ExecutionContext): IO[A] = () => Future(a)
     def run: Future[A] = toFuture(io)
 
   given (using ExecutionContext): Functor[IO] with
@@ -51,8 +51,7 @@ object IO:
 
   given [A: Semigroup] (using ExecutionContext): Semigroup[IO[A]] with
     def scombine(x: IO[A], y: IO[A]): IO[A] =
-      Applicative.liftA2[IO]((a: A) => a.<> _)(x)(y)
+      Applicative.liftA2[IO]((a: A) => a.<>)(x)(y)
 
   given [A: Monoid: Semigroup] (using ExecutionContext): Monoid[IO[A]] with
     def mempty: IO[A] = Applicative.pure[IO](Monoid.mempty)
-

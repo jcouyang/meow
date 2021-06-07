@@ -32,3 +32,7 @@ object ReaderT:
   given [R, M[_]: Monad:Applicative:Functor]: MonadReader[R, ReaderT[R, M, *]] with
     def ask = ReaderT.ask[R,M]
     def local[A](rr: R => R) = (ma: ReaderT[R, M, A]) => (r: R) => ma(rr(r))
+
+  given [A, B: Semigroup, M[_]](using Semigroup[M[B]]): Semigroup[ReaderT[A, M, B]] with
+    def scombine(fx: ReaderT[A, M, B], fy: ReaderT[A, M, B]): ReaderT[A, M, B] = (a: A) =>
+      fx(a) <> fy(a)

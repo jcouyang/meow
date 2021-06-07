@@ -5,6 +5,22 @@ import scala.annotation.targetName
 import generic.*
 import scala.deriving.*
 
+/*
+The class of monoids (types with an associative binary operation that has an identity). Instances should satisfy the following:
+
+### Right identity
+    x <> mempty = x
+### Left identity
+    mempty <> x = x
+### Associativity
+    x <> (y <> z) = (x <> y) <> z (Semigroup law)
+### Concatenation
+    mconcat = foldr (<>) mempty
+
+The method names refer to the monoid of lists under concatenation, but there are many other instances.
+
+Some types can be viewed as a monoid in more than one way, e.g. both addition and multiplication on numbers. In such cases we often define newtypes and make those instances of Monoid, e.g. Sum and Product.
+ */
 trait Monoid[A: Semigroup]:
   def mempty: A
 
@@ -16,6 +32,9 @@ object Monoid:
 
   given [A]: Monoid[List[A]] with
     def mempty: List[A] = Nil
+
+  given [A]: Monoid[Vector[A]] with
+    def mempty: Vector[A] = Vector()
 
   given Monoid[Unit] with
     def mempty = ()

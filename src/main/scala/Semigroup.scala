@@ -27,10 +27,11 @@ trait Semigroup[A]:
 
 object Semigroup:
   def scombine[A](x: A, y: A) = (s: Semigroup[A]) ?=> s.scombine(x,y)
+  def sconcat[A](nel: NonEmpty[A]) = (s: Semigroup[A]) ?=> s.sconcat(nel)
 
   given [A]: Semigroup[List[A]] with
     def scombine(x: List[A], y: List[A]): List[A] =
-      x.concat(y)
+      x ++ y
 
   given Semigroup[Int] with
     def scombine(x: Int, y: Int): Int = x + y
@@ -46,6 +47,10 @@ object Semigroup:
       case (None, y) => y
       case (x, None) => x
       case (Some(x), Some(y)) => Some(x <> y)
+
+  given [A: Semigroup]: Semigroup[Vector[A]] with
+    def scombine(x: Vector[A], y: Vector[A]): Vector[A] =
+      x ++ y
 
   given [A, B: Semigroup]: Semigroup[A => B] with
     def scombine(fx: A => B, fy: A => B): A => B = (a: A) =>
