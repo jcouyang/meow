@@ -48,7 +48,7 @@ object Semigroup:
       case (x, None) => x
       case (Some(x), Some(y)) => Some(x <> y)
 
-  given [A: Semigroup]: Semigroup[Vector[A]] with
+  given [A]: Semigroup[Vector[A]] with
     def scombine(x: Vector[A], y: Vector[A]): Vector[A] =
       x ++ y
 
