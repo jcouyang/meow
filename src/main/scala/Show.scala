@@ -58,29 +58,25 @@ object Show:
 
   inline given derived[T](using m: Mirror.Of[T]): Show[T] =
     lazy val showInsts = summonAsList[m.MirroredElemTypes, Show]
-    val name = constValue[m.MirroredLabel]
+    lazy val name = constValue[m.MirroredLabel]
     inline m match
       case s: Mirror.SumOf[T] =>
         showCoproduct(s, showInsts, name)
       case p: Mirror.ProductOf[T] =>
         showProduct(p, showInsts, name)
 
-  private def showCoproduct[T](s: Mirror.SumOf[T], insts: List[Show[?]], name: String): Show[T] =
+  private def showCoproduct[T](s: Mirror.SumOf[T], insts: => List[Show[Any]], name: => String): Show[T] =
     new Show[T] {
       def show(a: T): String =
         val ord = s.ordinal(a)
         s"${insts(ord).asInstanceOf[Show[T]].show(a)}: ${name}"
     }
 
-  private def showProduct[T](p: Mirror.ProductOf[T], insts: List[Show[?]], name: String): Show[T] =
+  private def showProduct[T](p: Mirror.ProductOf[T], insts: => List[Show[Any]], name: => String): Show[T] =
     new Show[T] {
       def show(a: T): String =
-        val elems = prodIterator(a).zip(insts.iterator).map {  // (5)
-            case (x, inst) => inst.asInstanceOf[Show[Any]].show(x)
-        }
+        val elems = insts.iterator.zip(prodIterator(a)).map { _.show(_) }
         s"${name}(${elems.mkString(", ")})"
     }
-  
-  private def prodIterator[T](p: T) = p.asInstanceOf[Product].productIterator
 
   def show[A](a: A)(using s: Show[A]) = s.show(a)

@@ -108,14 +108,12 @@ object Functor:
     def fmap[A, B](f: A => B) = (ea: Y[Z]) => ea
 
   inline given genFunctor[F[_]](using m: K1[F]): Functor[F] =
-    val name = constValue[m.MirroredLabel]
-
-    val functors = summonKindAsList[LiftP[Functor, m.MirroredElemTypes], Functor]
+    lazy val functors = summonKindAsList[LiftP[Functor, m.MirroredElemTypes], Functor]
     inline m match
       case s: K1Sum[F] =>
-        functorCoproduct(s, name, functors)
+        functorCoproduct(s,  functors)
       case p: K1Product[F] =>
-        functorProduct(p, name, functors)
+        functorProduct(p, functors)
 
   /*
    * ```scala
@@ -125,14 +123,14 @@ object Functor:
    */
   inline def derived[F[_]](using m: K1[F]): Functor[F]  = genFunctor[F]
 
-  private def functorCoproduct[F[_]](s: K1Sum[F], name: String, functors: List[Functor[[X]=>> Any]]): Functor[F] =
+  private def functorCoproduct[F[_]](s: K1Sum[F], functors: => List[Functor[[X]=>> Any]]): Functor[F] =
     new Functor[F] {
       def fmap[A, B](f: A => B): F[A] => F[B] = (fa: F[A]) =>
         val ord = s.ordinal(fa.asInstanceOf[s.MirroredMonoType])
         functors(ord).fmap(f)(fa).asInstanceOf[F[B]]
     }
 
-  private def functorProduct[F[_], T](p: K1Product[F], name: String, functors: List[Functor[[X] =>> Any]]): Functor[F] =
+  private def functorProduct[F[_], T](p: K1Product[F], functors: => List[Functor[[X] =>> Any]]): Functor[F] =
     new Functor[F] {
       def fmap[A, B](f: A => B): F[A] => F[B] = (fa: F[A]) =>
         val mapped = fa.asInstanceOf[Product].productIterator.zip(functors.iterator).map{

@@ -1,25 +1,18 @@
 package meowspec
 
-import meow.prelude.{given, _}
+import meow.prelude.{given, *}
 import meow.Show
 class ShowSpec extends munit.ScalaCheckSuite:
-  enum TestSum derives Show:
-    case TestProduct(a: Int, b: String)
-  val prod = TestSum.TestProduct(1, "2")
+  enum Tree[T] derives Show:
+    case Branch(left: Tree[T], right: Tree[T])
+    case Leaf(elem: T)
+
   test("show Int") {
     assertEquals(show(1), "1")
   }
 
-  test("show Sum") {
-    assertEquals(show(prod), """TestProduct(1, "2"): TestSum""")
-  }
-
   test("show Option") {
     assertEquals(show(Option("2")), """Some("2")""")
-  }
-
-  test("show Either") {
-    assertEquals(show(Left(prod)), """Left(TestProduct(1, "2"): TestSum)""")
   }
 
   test("show List") {
@@ -32,4 +25,10 @@ class ShowSpec extends munit.ScalaCheckSuite:
 
   test("show Map") {
     assertEquals(show(Map(1 -> 2, 3 -> 4)), """Map(1 -> 2, 3 -> 4)""")
+  }
+
+  test("show Tree") {
+    import Tree.*
+    val prod: Tree[String] = Branch(Leaf("l0"), Branch(Leaf("l1"), Leaf("r1")))
+    assertEquals(show(prod), """Branch(Leaf("l0"): Tree, Branch(Leaf("l1"): Tree, Leaf("r1"): Tree): Tree): Tree""")
   }
