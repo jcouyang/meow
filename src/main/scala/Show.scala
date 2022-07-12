@@ -66,17 +66,15 @@ object Show:
         showProduct(p, showInsts, name)
 
   private def showCoproduct[T](s: Mirror.SumOf[T], insts: => List[Show[Any]], name: => String): Show[T] =
-    new Show[T] {
+    new Show[T]:
       def show(a: T): String =
         val ord = s.ordinal(a)
         s"${insts(ord).asInstanceOf[Show[T]].show(a)}: ${name}"
-    }
 
   private def showProduct[T](p: Mirror.ProductOf[T], insts: => List[Show[Any]], name: => String): Show[T] =
-    new Show[T] {
+    new Show[T]:
       def show(a: T): String =
         val elems = insts.iterator.zip(prodIterator(a)).map { _.show(_) }
         s"${name}(${elems.mkString(", ")})"
-    }
 
   def show[A](a: A)(using s: Show[A]) = s.show(a)

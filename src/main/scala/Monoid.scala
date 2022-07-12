@@ -47,10 +47,9 @@ object Monoid:
 
   inline given derived[T](using m: Mirror.ProductOf[T]): Monoid[T] =
     lazy val insts = summonAsList[m.MirroredElemTypes, Monoid]
-    new Monoid[T] {
+    new Monoid[T]:
       def mempty: T =
         val elems = insts.iterator.map {
             inst => inst.asInstanceOf[Monoid[Any]].mempty
         }
         m.fromProduct(Tuple.fromArray(elems.toArray))
-    }
