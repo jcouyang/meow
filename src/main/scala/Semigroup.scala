@@ -58,10 +58,9 @@ object Semigroup:
 
   inline given derived[T](using m: Mirror.ProductOf[T]): Semigroup[T] =
     lazy val insts = summonAsList[m.MirroredElemTypes, Semigroup]
-    new Semigroup[T] {
+    new Semigroup[T]:
       def scombine(a: T, b: T): T =
         val elems = prodIterator(a).zip(prodIterator(b)).zip(insts.iterator).map {
             case ((x, y), inst) => inst.asInstanceOf[Semigroup[Any]].scombine(x, y)
         }
         m.fromProduct(Tuple.fromArray(elems.toArray))
-    }

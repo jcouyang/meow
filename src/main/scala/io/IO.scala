@@ -11,7 +11,7 @@ Applicative,Monad,Alternative
 }
 import control.mtl.MonadError
 
-opaque type IO[A] = Function0[Future[A]]
+opaque type IO[+A] = Function0[Future[A]]
 
 object IO:
   def puts(s: String)(using ExecutionContext): IO[Unit] = () => Future(println(s))

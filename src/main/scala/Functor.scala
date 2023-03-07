@@ -124,18 +124,16 @@ object Functor:
   inline def derived[F[_]](using m: K1[F]): Functor[F]  = genFunctor[F]
 
   private def functorCoproduct[F[_]](s: K1Sum[F], functors: => List[Functor[[X]=>> Any]]): Functor[F] =
-    new Functor[F] {
+    new Functor[F]:
       def fmap[A, B](f: A => B): F[A] => F[B] = (fa: F[A]) =>
         val ord = s.ordinal(fa.asInstanceOf[s.MirroredMonoType])
         functors(ord).fmap(f)(fa).asInstanceOf[F[B]]
-    }
 
   private def functorProduct[F[_], T](p: K1Product[F], functors: => List[Functor[[X] =>> Any]]): Functor[F] =
-    new Functor[F] {
+    new Functor[F]:
       def fmap[A, B](f: A => B): F[A] => F[B] = (fa: F[A]) =>
         val mapped = fa.asInstanceOf[Product].productIterator.zip(functors.iterator).map{
           (fa, F) => 
             F.fmap(f)(fa)
         }
         p.fromProduct(Tuple.fromArray(mapped.toArray)).asInstanceOf[F[B]]
-    }
